@@ -3,6 +3,7 @@ import constants
 import utilities
 from info_printer import draw_game_info
 from board import Board
+from game import Game
 
 pygame.init()
 
@@ -14,6 +15,9 @@ clock = pygame.time.Clock()
 if_restart_game = False
 if_undo_last_move = False
 
+icon_img = pygame.image.load("icon.png")
+pygame.display.set_icon(icon_img)
+
 restart_button_img = pygame.image.load("restart_button.png").convert_alpha()
 restart_button_img = utilities.scale_img(restart_button_img, constants.RESTART_BUTTON_SCALE)
 restart_button = None
@@ -24,7 +28,8 @@ undo_button = None
 
 best_score = utilities.read_best_score_from_file("best_score.txt")
 
-board = Board([[2, 4, 8, 16], [32, 64, 128, 256], [512, 1024, 2048, 4], [2, 2, 16, 99]])
+board = Board(game_start=True)
+game = Game(board)
 
 run = True
 while run:
@@ -33,10 +38,12 @@ while run:
 
     restart_button, undo_button = draw_game_info(screen, restart_button, restart_button_img,
                                                  undo_button, undo_button_img, 25805, best_score)
+
     board.draw(screen, 6*constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
-        print("button pressed")
+        board = Board(game_start=True)
+        game.board = board
         if_restart_game = True
 
     if undo_button.draw(screen) and not if_undo_last_move:
@@ -54,6 +61,7 @@ while run:
                 print("LEFT")
             if event.key in [pygame.K_d, pygame.K_RIGHT]:
                 print("RIGHT")
+                game.move_right()
             if event.key in [pygame.K_w, pygame.K_UP]:
                 print("UP")
             if event.key in [pygame.K_s, pygame.K_DOWN]:

@@ -15,7 +15,7 @@ def draw_helping_text(surface, big_text_height):
     coord_y_of_info_text = constants.PADDING + big_text_height
     info_text_width1, info_text_height = utilities.draw_text(surface, "Join the number and get to the ",
                                                              constants.NORMAL_LIGHT_FONT,
-                                                             constants.LIGHT_GREY, constants.PADDING,
+                                                             constants.GREY, constants.PADDING,
                                                              coord_y_of_info_text)
     info_text_width2, _ = utilities.draw_text(surface, "2048 tile!", constants.NORMAL_FONT, constants.DARK_GREY,
                                               constants.PADDING + info_text_width1, coord_y_of_info_text)
