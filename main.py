@@ -2,6 +2,7 @@ import pygame
 import constants
 import utilities
 from info_printer import draw_game_info
+from board import Board
 
 pygame.init()
 
@@ -18,12 +19,15 @@ restart_button = None
 
 best_score = utilities.read_best_score_from_file("best_score.txt")
 
+board = Board([[2, 4, 8, 16], [32, 64, 128, 256], [512, 1024, 2048, 4], [2, 2, 16, 99]])
+
 run = True
 while run:
     clock.tick(constants.FPS)
     screen.fill(constants.BACKGROUND_COLOR)
 
     restart_button = draw_game_info(screen, restart_button, restart_button_img, 25805, best_score)
+    board.draw(screen, 6*constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
         print("button pressed")

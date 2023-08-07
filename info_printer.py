@@ -12,7 +12,7 @@ def draw_game_title(surface, game_title):
 
 
 def draw_helping_text(surface, big_text_height):
-    coord_y_of_info_text = 1.5*constants.PADDING + big_text_height
+    coord_y_of_info_text = constants.PADDING + big_text_height
     info_text_width1, info_text_height = utilities.draw_text(surface, "Join the number and get to the ",
                                                              constants.NORMAL_LIGHT_FONT,
                                                              constants.LIGHT_GREY, constants.PADDING,
@@ -76,6 +76,6 @@ def draw_game_info(surface, restart_button, restart_button_img, score, best_scor
     # Create restart_button (it is dependent on the text info sizes)
     if not restart_button:
         restart_button = Button(constants.PADDING + info_text_width + 25,
-                                1.5*constants.PADDING + big_text_height,
+                                constants.PADDING + big_text_height,
                                 restart_button_img)
     return restart_button

@@ -10,13 +10,32 @@ DARK_GREY = (116, 110, 106)
 LIGHT_GREY = (160, 152, 157)
 LIGHT_BROWN = (187, 173, 160)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+COLORS_FOR_NUMBERS = {
+    2: (238, 228, 218),
+    4: (237, 224, 200),
+    8: (242, 177, 121),
+    16: (245, 149, 99),
+    32: (246, 124, 96),
+    64: (246, 94, 59),
+    128: (237, 207, 115),
+    256: (237, 204, 98),
+    512: (237, 200, 80),
+    1024: (237, 197, 63),
+    2048: (237, 194, 45),
+}
+
 
 font.init()
 BIG_FONT = font.Font("Roboto-Black.ttf", 120)
 NORMAL_FONT = font.Font("Roboto-Black.ttf", 30)
 NORMAL_LIGHT_FONT = font.Font("Roboto-Light.ttf", 30)
 SMALL_FONT = font.Font("Roboto-Black.ttf", 15)
+MEDIUM_FONT = font.Font("Roboto-Black.ttf", 50)
+
 PADDING = 50
+BOARD_PADDING = 15
 
 RESTART_BUTTON_SCALE = 1/8
 SCORE_BOX_WIDTH = 170
