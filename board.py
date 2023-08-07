@@ -5,14 +5,21 @@ import utilities
 
 class Board():
     def __init__(self, board_data: list):
-        self.board = board_data
+        self.board_data = board_data
 
-    def draw_board_background(self, surface, color, initial_y):
+    def draw(self, surface, initial_y):
+        self._draw_board_background(surface, constants.DARK_GREY, initial_y)
+
+        field_width, field_height = self._calc_width_height_of_field(initial_y)
+
+        self._draw_fields(surface, initial_y, field_width, field_height)
+
+    def _draw_board_background(self, surface, color, initial_y):
         pygame.draw.rect(surface, color, pygame.Rect(50, initial_y, constants.SCREEN_WIDTH - 2*constants.PADDING,
                                                      constants.SCREEN_HEIGHT - initial_y - constants.PADDING))
 
-    def draw_fields(self, surface, initial_y, field_width, field_height):
-        for i, row in enumerate(self.board):
+    def _draw_fields(self, surface, initial_y, field_width, field_height):
+        for i, row in enumerate(self.board_data):
             field_y = initial_y + (i+1)*constants.BOARD_PADDING + i*field_height
             for j, num in enumerate(row):
                 color = constants.COLORS_FOR_NUMBERS.get(num, (237, 197, 63))
@@ -27,7 +34,7 @@ class Board():
                                     field_center[0] - field_num_width // 2,
                                     field_center[1] - field_num_height // 2)
 
-    def calc_width_height_of_field(self, initial_y):
+    def _calc_width_height_of_field(self, initial_y):
         board_width = constants.SCREEN_WIDTH - 2*constants.PADDING
         width_for_fields = board_width - 5*constants.BOARD_PADDING
 
@@ -36,9 +43,4 @@ class Board():
 
         return width_for_fields // 4, height_for_fields // 4
 
-    def draw(self, surface, initial_y):
-        self.draw_board_background(surface, constants.DARK_GREY, initial_y)
 
-        field_width, field_height = self.calc_width_height_of_field(initial_y)
-
-        self.draw_fields(surface, initial_y, field_width, field_height)

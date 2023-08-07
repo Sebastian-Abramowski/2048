@@ -60,7 +60,8 @@ def draw_scores(surface, score, best_score, coord_x_of_score_info,
                         coord_y_of_scores_info + best_score_text_height + 5)
 
 
-def draw_game_info(surface, restart_button, restart_button_img, score, best_score):
+def draw_game_info(surface, restart_button, restart_button_img, undo_button, undo_button_img,
+                   score, best_score):
     # Draw "2048"
     big_text_width, big_text_height = draw_game_title(surface, "2048")
 
@@ -78,4 +79,11 @@ def draw_game_info(surface, restart_button, restart_button_img, score, best_scor
         restart_button = Button(constants.PADDING + info_text_width + 25,
                                 constants.PADDING + big_text_height,
                                 restart_button_img)
-    return restart_button
+
+    if not undo_button:
+        px_move_right = restart_button_img.get_width() // 2 - undo_button_img.get_width() // 2
+        undo_button = Button(constants.PADDING + info_text_width + 25 + px_move_right,
+                             constants.PADDING + big_text_height + 38,
+                             undo_button_img)
+
+    return restart_button, undo_button
