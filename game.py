@@ -1,5 +1,6 @@
 import constants
 import copy
+import utilities
 from board import Board
 
 
@@ -8,11 +9,14 @@ class Game():
         self.board = board
         self.score = 0
         self.if_undo_move = False
+        self.if_ai_play = False
         self._num_of_fields_in_row = num_of_fields_in_row
         self._last_board_data = None
+        self._last_score = None
 
     def move_horiziontally(self, direction):
         self._last_board_data = copy.deepcopy(self.board.board_data)
+        self._last_score = self.score
         self.if_undo_move = False
 
         if_board_changed = False
@@ -70,6 +74,7 @@ class Game():
 
     def move_vertically(self, direction):
         self._last_board_data = copy.deepcopy(self.board.board_data)
+        self._last_score = self.score
         self.if_undo_move = False
 
         if_board_changed = False
@@ -136,3 +141,14 @@ class Game():
         self.if_undo_move = True
         if self._last_board_data:
             self.board.board_data = self._last_board_data
+            self.score = self._last_score
+
+    def updates_scores(self, file_path):
+        if self.if_ai_play:
+            if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, "ai"):
+                utilities.update_best_score_in_file(
+                    file_path, self.score, self.if_ai_play)
+        else:
+            if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, "player"):
+                utilities.update_best_score_in_file(
+                    file_path, self.score, self.if_ai_play)

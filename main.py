@@ -47,19 +47,23 @@ while run:
     board.draw(screen, 6 * constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
+        game.updates_scores("best_score.txt")
+        game.score = 0
         board = Board(game_start=True)
         game.board = board
+
         if_restart_game = True
 
     if undo_button.draw(screen) and not game.if_undo_move:
         game.undo_last_move()
 
     if best_score < game.score:
-        utilities.update_best_score_in_file("best_score.txt", game.score)
+        utilities.update_best_score_in_file("best_score.txt", game.score, game.if_ai_play)
         best_score = game.score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            game.updates_scores("best_score.txt")
             run = False
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
@@ -77,6 +81,7 @@ while run:
                 if game.move_vertically("down"):
                     board.add_new_random_field()
             if event.key == pygame.K_ESCAPE:
+                game.updates_scores("best_score.txt")
                 run = False
 
     pygame.display.update()

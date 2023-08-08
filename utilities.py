@@ -1,4 +1,5 @@
 import pygame
+import csv
 
 
 def draw_text(surface, text, font, text_color, x, y):
@@ -23,10 +24,36 @@ def scale_img(image, scale):
 
 def read_best_score_from_file(file_path):
     with open(file_path, 'r') as file_handle:
-        for line in file_handle:
-            return int(line)
+        csvreader = csv.reader(file_handle)
+
+        scores = []
+        for row in csvreader:
+            score = int(row[1])
+            scores.append(score)
+        return max(scores)
 
 
-def update_best_score_in_file(file_path, new_best_score):
-    with open(file_path, 'w') as file_handle:
-        file_handle.write(str(new_best_score))
+def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str):
+    with open(file_path, 'r') as file_handle:
+        csvreader = csv.reader(file_handle)
+        data = list(csvreader)
+        if player_or_ai == "player":
+            return int(data[0][1])
+        elif player_or_ai == "ai":
+            return int(data[1][1])
+
+
+def update_best_score_in_file(file_path, new_best_score, if_ai):
+    existing_data = []
+    with open(file_path, 'r') as file_handle:
+        csvreader = csv.reader(file_handle)
+        existing_data = list(csvreader)
+
+    if if_ai:
+        existing_data[1][1] = new_best_score
+    else:
+        existing_data[0][1] = new_best_score
+
+    with open(file_path, 'w', newline='\n') as file_handle:
+        csvwriter = csv.writer(file_handle)
+        csvwriter.writerows(existing_data)
