@@ -5,7 +5,9 @@ import random
 
 
 class Board():
-    def __init__(self, board_data=None, game_start=False):
+    def __init__(self, board_data=None, game_start=False,
+                 num_of_fields_in_row=constants.NUM_OF_FIELDS_IN_ROW):
+        self.num_of_fields_in_row = num_of_fields_in_row
         board_data = self._get_empty_board() if not board_data else board_data
         self.board_data = board_data
         if game_start:
@@ -27,18 +29,18 @@ class Board():
         self._draw_fields(surface, initial_y, field_width, field_height)
 
     def _draw_board_background(self, surface, color, initial_y):
-        pygame.draw.rect(surface, color, pygame.Rect(50, initial_y, constants.SCREEN_WIDTH - 2*constants.PADDING,
+        pygame.draw.rect(surface, color, pygame.Rect(50, initial_y, constants.SCREEN_WIDTH - 2 * constants.PADDING,
                                                      constants.SCREEN_HEIGHT - initial_y - constants.PADDING))
 
     def _draw_fields(self, surface, initial_y, field_width, field_height):
         for i, row in enumerate(self.board_data):
-            field_y = initial_y + (i+1)*constants.BOARD_PADDING + i*field_height
+            field_y = initial_y + (i + 1) * constants.BOARD_PADDING + i * field_height
             for j, num in enumerate(row):
                 if num is None:
                     color = constants.LIGHT_GREY
                 else:
                     color = constants.COLORS_FOR_NUMBERS.get(num, (237, 197, 63))
-                field_x = constants.PADDING + (j+1)*constants.BOARD_PADDING + j*field_width
+                field_x = constants.PADDING + (j + 1) * constants.BOARD_PADDING + j * field_width
                 field_rect = pygame.Rect(field_x, field_y, field_width, field_height)
                 pygame.draw.rect(surface, color, field_rect)
                 field_center = field_rect.center
@@ -51,19 +53,19 @@ class Board():
                                         field_center[1] - field_num_height // 2)
 
     def _calc_width_height_of_field(self, initial_y):
-        board_width = constants.SCREEN_WIDTH - 2*constants.PADDING
-        width_for_fields = board_width - (constants.NUM_OF_FIELDS_IN_ROW+1)*constants.BOARD_PADDING
+        board_width = constants.SCREEN_WIDTH - 2 * constants.PADDING
+        width_for_fields = board_width - (self.num_of_fields_in_row + 1) * constants.BOARD_PADDING
 
         board_height = constants.SCREEN_HEIGHT - initial_y - constants.PADDING
-        height_for_fields = board_height - (constants.NUM_OF_FIELDS_IN_ROW+1)*constants.BOARD_PADDING
+        height_for_fields = board_height - (self.num_of_fields_in_row + 1) * constants.BOARD_PADDING
 
-        return (width_for_fields // constants.NUM_OF_FIELDS_IN_ROW,
-                height_for_fields // constants.NUM_OF_FIELDS_IN_ROW)
+        return (width_for_fields // self.num_of_fields_in_row,
+                height_for_fields // self.num_of_fields_in_row)
 
     def _get_empty_board(self):
         temp_board_data = []
-        for _ in range(constants.NUM_OF_FIELDS_IN_ROW):
-            temp_board_data.append([None]*constants.NUM_OF_FIELDS_IN_ROW)
+        for _ in range(self.num_of_fields_in_row):
+            temp_board_data.append([None] * self.num_of_fields_in_row)
         return temp_board_data
 
     def _add_two_random_fields(self):

@@ -25,7 +25,7 @@ def draw_helping_text(surface, big_text_height):
 
 
 def draw_score_info_background(surface, big_text_width):
-    coord_x_of_score_info = 2*constants.PADDING + big_text_width
+    coord_x_of_score_info = 2 * constants.PADDING + big_text_width
     pygame.draw.rect(surface, constants.LIGHT_BROWN,
                      pygame.Rect(coord_x_of_score_info, constants.PADDING,
                                  constants.SCORE_BOX_WIDTH, constants.SCORE_BOX_HEIGHT))
@@ -35,7 +35,7 @@ def draw_score_info_background(surface, big_text_width):
                         coord_x_of_score_info + (constants.SCORE_BOX_WIDTH // 2) - (score_text_width // 2),
                         coord_y_of_scores_info)
     pygame.draw.rect(surface, constants.LIGHT_BROWN,
-                     pygame.Rect(2*constants.PADDING + big_text_width + constants.SCORE_BOX_WIDTH + 14,
+                     pygame.Rect(2 * constants.PADDING + big_text_width + constants.SCORE_BOX_WIDTH + 14,
                                  constants.PADDING, constants.SCORE_BOX_WIDTH, constants.SCORE_BOX_HEIGHT))
     best_text_width, best_score_text_height = utilities.get_size_of_text("BEST", constants.SMALL_FONT)
     utilities.draw_text(surface, "BEST", constants.SMALL_FONT, constants.BACKGROUND_COLOR,
@@ -56,7 +56,8 @@ def draw_scores(surface, score, best_score, coord_x_of_score_info,
     best_score_width, _ = utilities.get_size_of_text(str(best_score), constants.NORMAL_FONT)
     utilities.draw_text(surface, str(best_score), constants.NORMAL_FONT, constants.WHITE,
                         coord_x_of_score_info + (
-                    constants.SCORE_BOX_WIDTH // 2) - (best_score_width // 2) + constants.SCORE_BOX_WIDTH + 14,
+                            constants.SCORE_BOX_WIDTH // 2) - (
+                            best_score_width // 2) + constants.SCORE_BOX_WIDTH + 14,
                         coord_y_of_scores_info + best_score_text_height + 5)
 
 

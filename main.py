@@ -19,7 +19,9 @@ icon_img = pygame.image.load("icon.png")
 pygame.display.set_icon(icon_img)
 
 restart_button_img = pygame.image.load("restart_button.png").convert_alpha()
-restart_button_img = utilities.scale_img(restart_button_img, constants.RESTART_BUTTON_SCALE)
+restart_button_img = utilities.scale_img(
+    restart_button_img, constants.RESTART_BUTTON_SCALE
+)
 restart_button = None
 
 undo_button_img = pygame.image.load("small_undo_button.png").convert_alpha()
@@ -36,10 +38,14 @@ while run:
     clock.tick(constants.FPS)
     screen.fill(constants.BACKGROUND_COLOR)
 
-    restart_button, undo_button = draw_game_info(screen, restart_button, restart_button_img,
-                                                 undo_button, undo_button_img, 25805, best_score)
+    restart_button, undo_button = draw_game_info(
+        screen,
+        restart_button, restart_button_img,
+        undo_button, undo_button_img,
+        game.score, best_score,
+    )
 
-    board.draw(screen, 6*constants.PADDING)
+    board.draw(screen, 6 * constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
         board = Board(game_start=True)
@@ -58,16 +64,17 @@ while run:
             if_undo_last_move = False
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_a, pygame.K_LEFT]:
-                print("LEFT")
+                if game.move_horiziontally("left"):
+                    board.add_new_random_field()
             if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                print("RIGHT")
-                game.move_right()
+                if game.move_horiziontally("right"):
+                    board.add_new_random_field()
             if event.key in [pygame.K_w, pygame.K_UP]:
                 print("UP")
             if event.key in [pygame.K_s, pygame.K_DOWN]:
                 print("DOWN")
             if event.key == pygame.K_ESCAPE:
-                print("ESCAPE")
+                run = False
 
     pygame.display.update()
 
