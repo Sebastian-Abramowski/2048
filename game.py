@@ -17,7 +17,7 @@ class Game():
         self._last_board_data = None
         self._last_score = None
 
-    def move_horiziontally(self, direction, score_rect_center):
+    def move_horiziontally(self, direction, score_rect_center=None):
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
@@ -59,8 +59,9 @@ class Game():
                             self.board.board_data[i][temp_j_index] = 2 * num
                             self.score += 2 * num
 
-                            damage = '+' + str(2 * num)
-                            self._update_score_text_group(damage, score_rect_center)
+                            if score_rect_center:
+                                damage = '+' + str(2 * num)
+                                self._update_score_text_group(damage, score_rect_center)
 
                             skip_counter += 1
             # if you are done changing the row,
@@ -79,7 +80,7 @@ class Game():
 
         return if_board_changed
 
-    def move_vertically(self, direction, score_rect_center):
+    def move_vertically(self, direction, score_rect_center=None):
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
@@ -121,8 +122,9 @@ class Game():
                             self.board.board_data[temp_j_index][i] = 2 * num
                             self.score += 2 * num
 
-                            damage = '+' + str(2 * num)
-                            self._update_score_text_group(damage, score_rect_center)
+                            if score_rect_center:
+                                damage = '+' + str(2 * num)
+                                self._update_score_text_group(damage, score_rect_center)
 
                             skip_counter += 1
             # if you are done changing the column,
