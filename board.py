@@ -11,7 +11,8 @@ class Board():
         board_data = self._get_empty_board() if not board_data else board_data
         self.board_data = board_data
         if game_start:
-            self._add_two_random_fields()
+            self.add_new_random_field()
+            self.add_new_random_field()
 
     def __str__(self):
         result = ""
@@ -39,7 +40,7 @@ class Board():
                 if num is None:
                     color = constants.LIGHT_GREY
                 else:
-                    color = constants.COLORS_FOR_NUMBERS.get(num, (237, 197, 63))
+                    color = constants.COLORS_FOR_NUMBERS.get(num, constants.YELLOW)
                 field_x = constants.PADDING + (j + 1) * constants.BOARD_PADDING + j * field_width
                 field_rect = pygame.Rect(field_x, field_y, field_width, field_height)
                 pygame.draw.rect(surface, color, field_rect)
@@ -68,22 +69,15 @@ class Board():
             temp_board_data.append([None] * self.num_of_fields_in_row)
         return temp_board_data
 
-    def _add_two_random_fields(self):
-        # Used at the beginning of the game
-        counter = 0
-        while counter != 2:
-            random_field = random.choices(range(4), k=2)
-            random_number = random.choice([2, 4])
-
-            if not self.board_data[random_field[0]][random_field[1]]:
-                self.board_data[random_field[0]][random_field[1]] = random_number
-                counter += 1
-
     def add_new_random_field(self):
         empty_fields = self.get_empty_fields()
         if empty_fields:
             random_field = random.choice(empty_fields)
-            random_number = random.choice([2, 4])
+
+            possible_numbers = [2, 4]
+            probabilities = [0.9, 0.1]  # 2 - 90%, 4 - 10%
+            random_number = random.choices(possible_numbers, probabilities, k=1)[0]
+
             self.board_data[random_field[0]][random_field[1]] = random_number
             return True
         return False

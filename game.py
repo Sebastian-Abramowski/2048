@@ -1,7 +1,9 @@
 import constants
 import copy
 import utilities
+import pygame
 from board import Board
+from score_text import ScoreText
 
 
 class Game():
@@ -10,11 +12,12 @@ class Game():
         self.score = 0
         self.if_undo_move = False
         self.if_ai_play = False
+        self.score_text_group = pygame.sprite.Group()
         self._num_of_fields_in_row = num_of_fields_in_row
         self._last_board_data = None
         self._last_score = None
 
-    def move_horiziontally(self, direction):
+    def move_horiziontally(self, direction, score_rect_center):
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
@@ -55,6 +58,10 @@ class Game():
                             self.board.board_data[i][j] = None
                             self.board.board_data[i][temp_j_index] = 2 * num
                             self.score += 2 * num
+
+                            damage = '+' + str(2 * num)
+                            self._update_score_text_group(damage, score_rect_center)
+
                             skip_counter += 1
             # if you are done changing the row,
             # you need to move fields to the right/left if it's possible
@@ -72,7 +79,7 @@ class Game():
 
         return if_board_changed
 
-    def move_vertically(self, direction):
+    def move_vertically(self, direction, score_rect_center):
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
@@ -113,6 +120,10 @@ class Game():
                             self.board.board_data[j][i] = None
                             self.board.board_data[temp_j_index][i] = 2 * num
                             self.score += 2 * num
+
+                            damage = '+' + str(2 * num)
+                            self._update_score_text_group(damage, score_rect_center)
+
                             skip_counter += 1
             # if you are done changing the column,
             # you need to move fields up/down if it's possible
@@ -144,11 +155,21 @@ class Game():
             self.score = self._last_score
 
     def updates_scores(self, file_path):
+        player_or_ai = None
         if self.if_ai_play:
-            if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, "ai"):
-                utilities.update_best_score_in_file(
-                    file_path, self.score, self.if_ai_play)
+            player_or_ai = "ai"
         else:
-            if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, "player"):
-                utilities.update_best_score_in_file(
-                    file_path, self.score, self.if_ai_play)
+            player_or_ai = "player"
+
+        if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, player_or_ai):
+            utilities.update_best_score_in_file(
+                file_path, self.score, self.if_ai_play)
+
+    def _update_score_text_group(self, damage: str, score_rect_center):
+        score_text = ScoreText(*score_rect_center, damage, constants.GREY, constants.NORMAL_FONT)
+        if self.score_text_group:
+            last_sprite_creation_time = self.score_text_group.sprites()[-1].creation_time
+            if score_text.creation_time - last_sprite_creation_time > score_text.cooldown:
+                self.score_text_group.add(score_text)
+        else:
+            self.score_text_group.add(score_text)

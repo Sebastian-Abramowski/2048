@@ -12,18 +12,22 @@ pygame.display.set_caption("2048")
 
 clock = pygame.time.Clock()
 
+# load sound effect
+merge_sound = pygame.mixer.Sound("Assets/merge_sound.wav")
+merge_sound.set_volume(0.2)
+
 if_restart_game = False
 
-icon_img = pygame.image.load("icon.png")
+icon_img = pygame.image.load("Assets/icon.png")
 pygame.display.set_icon(icon_img)
 
-restart_button_img = pygame.image.load("restart_button.png").convert_alpha()
+restart_button_img = pygame.image.load("Assets/restart_button.png").convert_alpha()
 restart_button_img = utilities.scale_img(
     restart_button_img, constants.RESTART_BUTTON_SCALE
 )
 restart_button = None
 
-undo_button_img = pygame.image.load("small_undo_button.png").convert_alpha()
+undo_button_img = pygame.image.load("Assets/small_undo_button.png").convert_alpha()
 undo_button_img = utilities.scale_img(undo_button_img, constants.UNDO_BUTTON_SCALE)
 undo_button = None
 
@@ -32,12 +36,13 @@ best_score = utilities.read_best_score_from_file("best_score.txt")
 board = Board(game_start=True)
 game = Game(board)
 
+
 run = True
 while run:
     clock.tick(constants.FPS)
     screen.fill(constants.BACKGROUND_COLOR)
 
-    restart_button, undo_button = draw_game_info(
+    restart_button, undo_button, score_rect_center = draw_game_info(
         screen,
         restart_button, restart_button_img,
         undo_button, undo_button_img,
@@ -49,6 +54,7 @@ while run:
     if restart_button.draw(screen) and not if_restart_game:
         game.updates_scores("best_score.txt")
         game.score = 0
+        game.score_text_group.empty()
         board = Board(game_start=True)
         game.board = board
 
@@ -56,6 +62,9 @@ while run:
 
     if undo_button.draw(screen) and not game.if_undo_move:
         game.undo_last_move()
+
+    game.score_text_group.update()
+    game.score_text_group.draw(screen)
 
     if best_score < game.score:
         utilities.update_best_score_in_file("best_score.txt", game.score, game.if_ai_play)
@@ -69,17 +78,21 @@ while run:
             if_restart_game = False
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_a, pygame.K_LEFT]:
-                if game.move_horiziontally("left"):
+                if game.move_horiziontally("left", score_rect_center):
                     board.add_new_random_field()
+                    merge_sound.play()
             if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                if game.move_horiziontally("right"):
+                if game.move_horiziontally("right", score_rect_center):
                     board.add_new_random_field()
+                    merge_sound.play()
             if event.key in [pygame.K_w, pygame.K_UP]:
-                if game.move_vertically("up"):
+                if game.move_vertically("up", score_rect_center):
                     board.add_new_random_field()
+                    merge_sound.play()
             if event.key in [pygame.K_s, pygame.K_DOWN]:
-                if game.move_vertically("down"):
+                if game.move_vertically("down", score_rect_center):
                     board.add_new_random_field()
+                    merge_sound.play()
             if event.key == pygame.K_ESCAPE:
                 game.updates_scores("best_score.txt")
                 run = False

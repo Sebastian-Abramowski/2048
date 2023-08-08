@@ -9,6 +9,7 @@ BACKGROUND_COLOR = (251, 248, 240)
 DARK_GREY = (116, 110, 106)
 GREY = (160, 152, 157)
 LIGHT_GREY = (214, 205, 196)
+YELLOW = (237, 197, 63)
 LIGHT_BROWN = (187, 173, 160)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -29,11 +30,11 @@ COLORS_FOR_NUMBERS = {
 
 
 font.init()
-BIG_FONT = font.Font("Roboto-Black.ttf", 120)
-NORMAL_FONT = font.Font("Roboto-Black.ttf", 30)
-NORMAL_LIGHT_FONT = font.Font("Roboto-Light.ttf", 30)
-SMALL_FONT = font.Font("Roboto-Black.ttf", 15)
-MEDIUM_FONT = font.Font("Roboto-Black.ttf", 50)
+BIG_FONT = font.Font("Assets/Roboto-Black.ttf", 120)
+NORMAL_FONT = font.Font("Assets/Roboto-Black.ttf", 30)
+NORMAL_LIGHT_FONT = font.Font("Assets/Roboto-Light.ttf", 30)
+SMALL_FONT = font.Font("Assets/Roboto-Black.ttf", 15)
+MEDIUM_FONT = font.Font("Assets/Roboto-Black.ttf", 50)
 
 PADDING = 50
 BOARD_PADDING = 15

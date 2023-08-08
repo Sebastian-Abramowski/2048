@@ -26,9 +26,9 @@ def draw_helping_text(surface, big_text_height):
 
 def draw_score_info_background(surface, big_text_width):
     coord_x_of_score_info = 2 * constants.PADDING + big_text_width
-    pygame.draw.rect(surface, constants.LIGHT_BROWN,
-                     pygame.Rect(coord_x_of_score_info, constants.PADDING,
-                                 constants.SCORE_BOX_WIDTH, constants.SCORE_BOX_HEIGHT))
+    rect_on_left = pygame.Rect(coord_x_of_score_info, constants.PADDING,
+                               constants.SCORE_BOX_WIDTH, constants.SCORE_BOX_HEIGHT)
+    pygame.draw.rect(surface, constants.LIGHT_BROWN, rect_on_left)
     score_text_width, score_text_height = utilities.get_size_of_text("SCORE", constants.SMALL_FONT)
     coord_y_of_scores_info = constants.PADDING + 10
     utilities.draw_text(surface, "SCORE", constants.SMALL_FONT, constants.BACKGROUND_COLOR,
@@ -44,7 +44,8 @@ def draw_score_info_background(surface, big_text_width):
                             best_text_width // 2) + constants.SCORE_BOX_WIDTH + 14,
                         coord_y_of_scores_info)
 
-    return [coord_x_of_score_info, coord_y_of_scores_info, score_text_height, best_score_text_height]
+    return [rect_on_left.center, coord_x_of_score_info,
+            coord_y_of_scores_info, score_text_height, best_score_text_height]
 
 
 def draw_scores(surface, score, best_score, coord_x_of_score_info,
@@ -73,7 +74,7 @@ def draw_game_info(surface, restart_button, restart_button_img, undo_button, und
     score_info = draw_score_info_background(surface, big_text_width)
 
     # Draw score and the best score
-    draw_scores(surface, score, best_score, *score_info)
+    draw_scores(surface, score, best_score, *score_info[1::])
 
     # Create restart_button (it is dependent on the text info sizes)
     if not restart_button:
@@ -87,4 +88,6 @@ def draw_game_info(surface, restart_button, restart_button_img, undo_button, und
                              constants.PADDING + big_text_height + 38,
                              undo_button_img)
 
-    return restart_button, undo_button
+    background_score_rect_center = score_info[0]
+
+    return restart_button, undo_button, background_score_rect_center
