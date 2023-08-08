@@ -13,7 +13,6 @@ pygame.display.set_caption("2048")
 clock = pygame.time.Clock()
 
 if_restart_game = False
-if_undo_last_move = False
 
 icon_img = pygame.image.load("icon.png")
 pygame.display.set_icon(icon_img)
@@ -52,16 +51,18 @@ while run:
         game.board = board
         if_restart_game = True
 
-    if undo_button.draw(screen) and not if_undo_last_move:
-        print("button2 pressed")
-        if_undo_last_move = True
+    if undo_button.draw(screen) and not game.if_undo_move:
+        game.undo_last_move()
+
+    if best_score < game.score:
+        utilities.update_best_score_in_file("best_score.txt", game.score)
+        best_score = game.score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
-            if_undo_last_move = False
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_a, pygame.K_LEFT]:
                 if game.move_horiziontally("left"):

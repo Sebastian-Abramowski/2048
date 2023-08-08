@@ -7,13 +7,18 @@ class Game():
     def __init__(self, board: Board, num_of_fields_in_row=constants.NUM_OF_FIELDS_IN_ROW):
         self.board = board
         self.score = 0
+        self.if_undo_move = False
         self._num_of_fields_in_row = num_of_fields_in_row
+        self._last_board_data = None
 
     def move_horiziontally(self, direction):
+        self._last_board_data = copy.deepcopy(self.board.board_data)
+        self.if_undo_move = False
+
         if_board_changed = False
+        board_before_changing = copy.deepcopy(self.board.board_data)
         for i in range(self._num_of_fields_in_row):
             skip_counter = 0
-            row_before_changing = copy.copy(self.board.board_data[i])
 
             if direction == "left":
                 col_range = range(self._num_of_fields_in_row)
@@ -48,7 +53,7 @@ class Game():
                             self.score += 2 * num
                             skip_counter += 1
             # if you are done changing the row,
-            # you need to move fields to the right if it's possible
+            # you need to move fields to the right/left if it's possible
             row = self.board.board_data[i]
             filter_none_values = [num for num in row if num is not None]
             fill_none_values = [None] * (self._num_of_fields_in_row - len(filter_none_values))
@@ -58,29 +63,32 @@ class Game():
             elif direction == "left":
                 self.board.board_data[i] = filter_none_values + fill_none_values
 
-            if row_before_changing != self.board.board_data[i]:
+            if board_before_changing != self.board.board_data:
                 if_board_changed = True
 
         return if_board_changed
 
     def move_vertically(self, direction):
+        self._last_board_data = copy.deepcopy(self.board.board_data)
+        self.if_undo_move = False
+
         if_board_changed = False
         board_before_changing = copy.deepcopy(self.board.board_data)
         for i in range(self._num_of_fields_in_row):
             skip_counter = 0
 
             if direction == "up":
-                col_range = range(self._num_of_fields_in_row)
+                row_range = range(self._num_of_fields_in_row)
                 merge_cond = lambda j_index: j_index < self._num_of_fields_in_row
                 next_index = lambda j_index: j_index + 1
                 not_out_of_range = lambda j_index: j_index < self._num_of_fields_in_row
             elif direction == "down":
-                col_range = range(self._num_of_fields_in_row - 1, -1, -1)
+                row_range = range(self._num_of_fields_in_row - 1, -1, -1)
                 merge_cond = lambda j_index: j_index >= 0
                 next_index = lambda j_index: j_index - 1
                 not_out_of_range = lambda j_index: j_index >= 0
 
-            for j in col_range:
+            for j in row_range:
                 if skip_counter > 0:
                     skip_counter -= 1
                     continue
@@ -101,8 +109,8 @@ class Game():
                             self.board.board_data[temp_j_index][i] = 2 * num
                             self.score += 2 * num
                             skip_counter += 1
-            # if you are done changing the row,
-            # you need to move fields to the right if it's possible
+            # if you are done changing the column,
+            # you need to move fields up/down if it's possible
             column = []
             for index_col in range(self._num_of_fields_in_row):
                 column.append(self.board.board_data[index_col][i])
@@ -123,3 +131,8 @@ class Game():
                 if_board_changed = True
 
         return if_board_changed
+
+    def undo_last_move(self):
+        self.if_undo_move = True
+        if self._last_board_data:
+            self.board.board_data = self._last_board_data
