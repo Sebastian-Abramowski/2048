@@ -70,9 +70,11 @@ while run:
                 if game.move_horiziontally("right"):
                     board.add_new_random_field()
             if event.key in [pygame.K_w, pygame.K_UP]:
-                print("UP")
+                if game.move_vertically("up"):
+                    board.add_new_random_field()
             if event.key in [pygame.K_s, pygame.K_DOWN]:
-                print("DOWN")
+                if game.move_vertically("down"):
+                    board.add_new_random_field()
             if event.key == pygame.K_ESCAPE:
                 run = False
 

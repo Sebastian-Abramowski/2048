@@ -108,6 +108,19 @@ def test_move_right_ultimate_test():
         [None, None, None, None, 4, 4]]
 
 
+def test_move_right_order():
+    board = Board([[None] * 4,
+                   [None] * 4,
+                   [None, 2, 2, 2],
+                   [None] * 4])
+    game = Game(board)
+    assert game.move_horiziontally("right") is True
+    assert board.board_data == [[None] * 4,
+                                [None] * 4,
+                                [None, None, 2, 4],
+                                [None] * 4]
+
+
 # TEST MOVING LEFT
 
 
@@ -212,3 +225,19 @@ def test_move_left_ultimate_test():
         [2, 4, 8, 16, 32, 64],
         [4, 32, None, None, None, None],
         [4, 4, None, None, None, None]]
+
+
+def test_move_left_order():
+    board = Board([[None] * 4,
+                   [None] * 4,
+                   [2, 2, 2, None],
+                   [None] * 4])
+    game = Game(board)
+    assert game.move_horiziontally("left") is True
+    assert board.board_data == [[None] * 4,
+                                [None] * 4,
+                                [4, 2, None, None],
+                                [None] * 4]
+
+
+# TEST MOVING UP
