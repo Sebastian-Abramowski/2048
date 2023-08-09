@@ -13,6 +13,8 @@ YELLOW = (237, 197, 63)
 LIGHT_BROWN = (187, 173, 160)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+BLACK = (39, 39, 39)
+GREEN = (16, 185, 129)
 
 COLORS_FOR_NUMBERS = {
     2: (238, 228, 218),
@@ -30,7 +32,8 @@ COLORS_FOR_NUMBERS = {
 
 
 font.init()
-BIG_FONT = font.Font("Assets/Roboto-Black.ttf", 120)
+HUGE_FONT = font.Font("Assets/Roboto-Black.ttf", 120)
+BIG_FONT = font.Font("Assets/Roboto-Black.ttf", 100)
 NORMAL_FONT = font.Font("Assets/Roboto-Black.ttf", 30)
 NORMAL_LIGHT_FONT = font.Font("Assets/Roboto-Light.ttf", 30)
 SMALL_FONT = font.Font("Assets/Roboto-Black.ttf", 15)

@@ -1,2 +1,2 @@
-player,2532
-ai,0
+player,12308
+ai,2200

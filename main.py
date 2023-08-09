@@ -1,9 +1,9 @@
 import pygame
 import constants
 import utilities
-from info_printer import draw_game_info
 from board import Board
 from game import Game
+from info_printer import draw_game_info, draw_end_of_game_info
 
 pygame.init()
 
@@ -33,9 +33,8 @@ undo_button = None
 
 best_score = utilities.read_best_score_from_file("best_score.txt")
 
-board = Board(game_start=True)
+board = Board([[1024, 1024, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]], game_start=True)
 game = Game(board)
-
 
 run = True
 while run:
@@ -66,6 +65,10 @@ while run:
     game.score_text_group.update()
     game.score_text_group.draw(screen)
 
+    if game.check_for_win() and not game.if_skip_win and not game.if_ai_play:
+        draw_end_of_game_info(screen, if_win=True)
+        game.if_blocked_moving = True
+
     if best_score < game.score:
         utilities.update_best_score_in_file("best_score.txt", game.score, game.if_ai_play)
         best_score = game.score
@@ -77,25 +80,29 @@ while run:
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
         if event.type == pygame.KEYDOWN:
-            if event.key in [pygame.K_a, pygame.K_LEFT]:
-                if game.move_horiziontally("left", score_rect_center):
-                    board.add_new_random_field()
-                    merge_sound.play()
-            if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                if game.move_horiziontally("right", score_rect_center):
-                    board.add_new_random_field()
-                    merge_sound.play()
-            if event.key in [pygame.K_w, pygame.K_UP]:
-                if game.move_vertically("up", score_rect_center):
-                    board.add_new_random_field()
-                    merge_sound.play()
-            if event.key in [pygame.K_s, pygame.K_DOWN]:
-                if game.move_vertically("down", score_rect_center):
-                    board.add_new_random_field()
-                    merge_sound.play()
+            if not game.if_blocked_moving:
+                if event.key in [pygame.K_a, pygame.K_LEFT]:
+                    if game.move_horiziontally("left", score_rect_center):
+                        board.add_new_random_field()
+                        merge_sound.play()
+                if event.key in [pygame.K_d, pygame.K_RIGHT]:
+                    if game.move_horiziontally("right", score_rect_center):
+                        board.add_new_random_field()
+                        merge_sound.play()
+                if event.key in [pygame.K_w, pygame.K_UP]:
+                    if game.move_vertically("up", score_rect_center):
+                        board.add_new_random_field()
+                        merge_sound.play()
+                if event.key in [pygame.K_s, pygame.K_DOWN]:
+                    if game.move_vertically("down", score_rect_center):
+                        board.add_new_random_field()
+                        merge_sound.play()
             if event.key == pygame.K_ESCAPE:
                 game.update_scores_in_file("best_score.txt")
                 run = False
+            if event.key == pygame.K_SPACE:
+                game.if_skip_win = True
+                game.if_blocked_moving = False
 
     pygame.display.update()
 

@@ -5,7 +5,7 @@ from button import Button
 
 
 def draw_game_title(surface, game_title):
-    text_width, text_height = utilities.draw_text(surface, game_title, constants.BIG_FONT,
+    text_width, text_height = utilities.draw_text(surface, game_title, constants.HUGE_FONT,
                                                   constants.DARK_GREY, constants.PADDING, constants.PADDING)
 
     return text_width, text_height
@@ -91,3 +91,25 @@ def draw_game_info(surface, restart_button, restart_button_img, undo_button, und
     background_score_rect_center = score_info[0]
 
     return restart_button, undo_button, background_score_rect_center
+
+
+def draw_end_of_game_info(surface, if_win=False, if_blocked=False):
+    text = ""
+    secondary_text = ""
+    if if_win:
+        text = "YOU WON!"
+        secondary_text = "Press 'space' to continue"
+    elif if_blocked:
+        text = "GAME OVER!"
+        secondary_text = "Press 'space' to restart"
+    text_width, text_height = utilities.get_size_of_text(text, constants.BIG_FONT)
+    text_x = (constants.SCREEN_WIDTH - text_width) // 2
+    text_y = (constants.SCREEN_HEIGHT - text_height) // 2 + 35
+    color = constants.BLACK if if_blocked else constants.GREEN
+    utilities.draw_text(surface, text, constants.BIG_FONT, color, text_x, text_y)
+
+    sec_text_width, sec_text_height = utilities.get_size_of_text(secondary_text, constants.NORMAL_FONT)
+    sec_text_x = (constants.SCREEN_WIDTH - sec_text_width) // 2
+    sec_text_y = (constants.SCREEN_HEIGHT - sec_text_height) // 2 + 95
+    utilities.draw_text(surface, secondary_text, constants.NORMAL_FONT,
+                        color, sec_text_x, sec_text_y)

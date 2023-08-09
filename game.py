@@ -13,6 +13,8 @@ class Game():
         self.if_undo_move = False
         self.if_ai_play = False
         self.score_text_group = pygame.sprite.Group()
+        self.if_skip_win = False
+        self.if_blocked_moving = False
         self._num_of_fields_in_row = num_of_fields_in_row
         self._last_board_data = None
         self._last_score = None
@@ -179,3 +181,10 @@ class Game():
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
+
+    def check_for_win(self):
+        for row in self.board.board_data:
+            for num in row:
+                if num == 2048:
+                    return True
+        return False
