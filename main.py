@@ -52,7 +52,7 @@ while run:
     board.draw(screen, 6 * constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
-        game.updates_scores("best_score.txt")
+        game.update_scores_in_file("best_score.txt")
         game.score = 0
         game.score_text_group.empty()
         board = Board(game_start=True)
@@ -72,7 +72,7 @@ while run:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game.updates_scores("best_score.txt")
+            game.update_scores_in_file("best_score.txt")
             run = False
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
@@ -94,7 +94,7 @@ while run:
                     board.add_new_random_field()
                     merge_sound.play()
             if event.key == pygame.K_ESCAPE:
-                game.updates_scores("best_score.txt")
+                game.update_scores_in_file("best_score.txt")
                 run = False
 
     pygame.display.update()
