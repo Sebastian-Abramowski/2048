@@ -15,13 +15,15 @@ class Game():
         self.if_ai_play = False
         self.score_text_group = pygame.sprite.Group()
         self.if_skip_win = False
-        self.if_blocked_moving = False
+        self.if_moving_is_blocked = False
+        self.if_blocked = False
         self._num_of_fields_in_row = num_of_fields_in_row
         self._last_board_data = None
         self._last_score = None
 
-    def move_horiziontally(self, direction, score_rect_center=None):
-        self._save_current_state()
+    def move_horiziontally(self, direction, score_rect_center=None, if_save_last_move=True):
+        if if_save_last_move:
+            self._save_current_state()
 
         if_board_changed = False
         board_before_changing = copy.deepcopy(self.board.board_data)
@@ -93,8 +95,9 @@ class Game():
         elif direction == "left":
             self.board.board_data[row_index] = fields_values + none_values
 
-    def move_vertically(self, direction, score_rect_center=None):
-        self._save_current_state()
+    def move_vertically(self, direction, score_rect_center=None, if_save_last_move=True):
+        if if_save_last_move:
+            self._save_current_state()
 
         if_board_changed = False
         board_before_changing = copy.deepcopy(self.board.board_data)
@@ -227,3 +230,27 @@ class Game():
                 if num == 2048:
                     return True
         return False
+
+    def check_if_blocked(self):
+        new_board = copy.deepcopy(self.board)
+        new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
+
+        if_moved_right = new_game.move_horiziontally("right", if_save_last_move=False)
+        if_moved_left = new_game.move_horiziontally("left", if_save_last_move=False)
+        if if_moved_right or if_moved_left:
+            return False
+        if_moved_up = new_game.move_vertically("up", if_save_last_move=False)
+        if_moved_down = new_game.move_vertically("down", if_save_last_move=False)
+        if if_moved_up or if_moved_down:
+            return False
+        return True
+
+    def restart_game(self, file_path_to_best_scores):
+        self.update_scores_in_file(file_path_to_best_scores)
+        self.score = 0
+        self.score_text_group.empty()
+        board = Board(game_start=True)
+        self.board = board
+        self.if_blocked = False
+        self.if_moving_is_blocked = False
+        self.if_skip_win = True

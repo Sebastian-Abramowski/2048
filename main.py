@@ -31,7 +31,7 @@ undo_button_img = pygame.image.load("Assets/small_undo_button.png").convert_alph
 undo_button_img = utilities.scale_img(undo_button_img, constants.UNDO_BUTTON_SCALE)
 undo_button = None
 
-best_score = utilities.read_best_score_from_file("best_score.txt")
+best_score = utilities.read_best_score_from_file(constants.SCORES_FILE_PATH)
 
 board = Board(game_start=True)
 game = Game(board)
@@ -48,18 +48,15 @@ while run:
         game.score, best_score,
     )
 
-    board.draw(screen, 6 * constants.PADDING)
+    game.board.draw(screen, 6 * constants.PADDING)
 
     if restart_button.draw(screen) and not if_restart_game:
-        game.update_scores_in_file("best_score.txt")
-        game.score = 0
-        game.score_text_group.empty()
-        board = Board(game_start=True)
-        game.board = board
+        game.restart_game(constants.SCORES_FILE_PATH)
 
         if_restart_game = True
 
-    if undo_button.draw(screen) and not game.if_undo_move:
+    if_there_was_win_or_blockade = not game.if_blocked and not game.if_moving_is_blocked
+    if undo_button.draw(screen) and not game.if_undo_move and if_there_was_win_or_blockade:
         game.undo_last_move()
 
     game.score_text_group.update()
@@ -68,42 +65,50 @@ while run:
     if game.check_for_win() and not game.if_skip_win and not game.if_ai_play:
         draw_end_of_game_info(screen, "YOU WON!", "Press 'space' to continue",
                               constants.GREEN)
-        game.if_blocked_moving = True
+        game.if_moving_is_blocked = True
+
+    if game.check_if_blocked():
+        draw_end_of_game_info(screen, "GAME OVER!", "Press 'space' to restart",
+                              constants.BLACK)
+        game.if_blocked = True
 
     if best_score < game.score:
-        utilities.update_best_score_in_file("best_score.txt", game.score, game.if_ai_play)
+        utilities.update_best_score_in_file(constants.SCORES_FILE_PATH, game.score, game.if_ai_play)
         best_score = game.score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game.update_scores_in_file("best_score.txt")
+            game.update_scores_in_file(constants.SCORES_FILE_PATH)
             run = False
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
         if event.type == pygame.KEYDOWN:
-            if not game.if_blocked_moving:
+            if not game.if_moving_is_blocked:
                 if event.key in [pygame.K_a, pygame.K_LEFT]:
                     if game.move_horiziontally("left", score_rect_center):
-                        board.add_new_random_field()
+                        game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_d, pygame.K_RIGHT]:
                     if game.move_horiziontally("right", score_rect_center):
-                        board.add_new_random_field()
+                        game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_w, pygame.K_UP]:
                     if game.move_vertically("up", score_rect_center):
-                        board.add_new_random_field()
+                        game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_s, pygame.K_DOWN]:
                     if game.move_vertically("down", score_rect_center):
-                        board.add_new_random_field()
+                        game.board.add_new_random_field()
                         merge_sound.play()
             if event.key == pygame.K_ESCAPE:
-                game.update_scores_in_file("best_score.txt")
+                game.update_scores_in_file(constants.SCORES_FILE_PATH)
                 run = False
             if event.key == pygame.K_SPACE:
-                game.if_skip_win = True
-                game.if_blocked_moving = False
+                if game.if_moving_is_blocked:  # win case
+                    game.if_moving_is_blocked = False
+                    game.if_skip_win = True
+                if game.if_blocked:
+                    game.restart_game(constants.SCORES_FILE_PATH)
 
     pygame.display.update()
 

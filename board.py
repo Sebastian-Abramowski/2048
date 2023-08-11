@@ -2,6 +2,7 @@ import pygame
 import constants
 import utilities
 import random
+import copy
 
 
 class Board():
@@ -13,6 +14,12 @@ class Board():
         if game_start:
             self.add_new_random_field()
             self.add_new_random_field()
+
+    def __deepcopy__(self, memo=None):
+        new_board = Board(num_of_fields_in_row=self.num_of_fields_in_row)
+        new_board.board_data = copy.deepcopy(self.board_data)
+
+        return new_board
 
     def __str__(self):
         result = ""
