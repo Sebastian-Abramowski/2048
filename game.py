@@ -4,6 +4,7 @@ import utilities
 import pygame
 from board import Board
 from score_text import ScoreText
+from typing import Callable
 
 
 class Game():
@@ -26,36 +27,8 @@ class Game():
         board_before_changing = copy.deepcopy(self.board.board_data)
 
         for row_index in range(self._num_of_fields_in_row):
-            skip_counter = 0
+            self._merge_fields_in_row(row_index, direction, score_rect_center)
 
-            col_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
-
-            for column_index in col_range:
-                if skip_counter > 0:
-                    skip_counter -= 1
-                    continue
-
-                num = self.board.board_data[row_index][column_index]
-
-                temp_col_index = next_index(column_index)
-
-                if num:
-                    while merge_cond(temp_col_index) and self.board.board_data[
-                            row_index][temp_col_index] is None:
-                        temp_col_index = next_index(temp_col_index)
-                        skip_counter += 1
-
-                    if not_out_of_range(temp_col_index):
-                        if self.board.board_data[row_index][temp_col_index] == num:
-                            self.board.board_data[row_index][column_index] = None
-                            self.board.board_data[row_index][temp_col_index] = 2 * num
-                            self.score += 2 * num
-
-                            if score_rect_center:
-                                damage = '+' + str(2 * num)
-                                self._add_to_score_text_group(damage, score_rect_center)
-
-                            skip_counter += 1
         # move fields to the right/left if it's possible
         self.move_everything_horizontally(direction)
 
@@ -63,6 +36,45 @@ class Game():
             if_board_changed = True
 
         return if_board_changed
+
+    def _merge_fields_in_row(self, row_index, direction, score_rect_center):
+        skip_counter = 0
+        col_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
+
+        for column_index in col_range:
+            if skip_counter > 0:
+                skip_counter -= 1
+                continue
+
+            num = self.board.board_data[row_index][column_index]
+            temp_col_index = next_index(column_index)
+
+            if num:
+                skip_counter, temp_col_index = self._skip_none_values_in_row(merge_cond, next_index, skip_counter,
+                                                                             row_index, temp_col_index)
+                skip_counter = self._merge_two_fields_in_row(not_out_of_range, skip_counter, num, row_index,
+                                                             column_index, temp_col_index, score_rect_center)
+
+    def _skip_none_values_in_row(self, merge_cond: Callable[[int], bool], next_index: Callable[[int], int],
+                                 skip_counter, row_index, temp_col_index):
+        while merge_cond(temp_col_index) and self.board.board_data[
+                row_index][temp_col_index] is None:
+            temp_col_index = next_index(temp_col_index)
+            skip_counter += 1
+        return skip_counter, temp_col_index
+
+    def _merge_two_fields_in_row(self, not_out_of_range: Callable[[int], bool], skip_counter, num,
+                                 row_index, column_index, temp_col_index, score_rect_center):
+        if not_out_of_range(temp_col_index):
+            if self.board.board_data[row_index][temp_col_index] == num:
+                self.board.board_data[row_index][column_index] = None
+                self.board.board_data[row_index][temp_col_index] = 2 * num
+                self.score += 2 * num
+
+                self._add_damage_to_score_text_group(num, score_rect_center)
+
+                skip_counter += 1
+        return skip_counter
 
     def move_everything_horizontally(self, direction):
         # Moves everything to the right or left as much as it can
@@ -88,36 +100,8 @@ class Game():
         board_before_changing = copy.deepcopy(self.board.board_data)
 
         for column_index in range(self._num_of_fields_in_row):
-            skip_counter = 0
+            self._merge_fields_in_column(column_index, direction, score_rect_center)
 
-            row_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
-
-            for row_index in row_range:
-                if skip_counter > 0:
-                    skip_counter -= 1
-                    continue
-
-                num = self.board.board_data[row_index][column_index]
-
-                temp_row_index = next_index(row_index)
-
-                if num:
-                    while merge_cond(temp_row_index) and self.board.board_data[
-                            temp_row_index][column_index] is None:
-                        temp_row_index = next_index(temp_row_index)
-                        skip_counter += 1
-
-                    if not_out_of_range(temp_row_index):
-                        if self.board.board_data[temp_row_index][column_index] == num:
-                            self.board.board_data[row_index][column_index] = None
-                            self.board.board_data[temp_row_index][column_index] = 2 * num
-                            self.score += 2 * num
-
-                            if score_rect_center:
-                                damage = '+' + str(2 * num)
-                                self._add_to_score_text_group(damage, score_rect_center)
-
-                            skip_counter += 1
         # move fields up/down if it's possible
         self.move_everything_vertically(direction)
 
@@ -125,6 +109,47 @@ class Game():
             if_board_changed = True
 
         return if_board_changed
+
+    def _merge_fields_in_column(self, column_index, direction, score_rect_center):
+        skip_counter = 0
+        row_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
+
+        for row_index in row_range:
+            if skip_counter > 0:
+                skip_counter -= 1
+                continue
+
+            num = self.board.board_data[row_index][column_index]
+            temp_row_index = next_index(row_index)
+
+            if num:
+                skip_counter, temp_row_index = self._skip_none_values_in_column(merge_cond, next_index,
+                                                                                skip_counter, temp_row_index,
+                                                                                column_index)
+                skip_counter = self._merge_two_fields_in_column(not_out_of_range, skip_counter, num,
+                                                                row_index, column_index, temp_row_index,
+                                                                score_rect_center)
+
+    def _merge_two_fields_in_column(self, not_out_of_range: Callable[[int], bool], skip_counter, num,
+                                    row_index, column_index, temp_row_index, score_rect_center):
+        if not_out_of_range(temp_row_index):
+            if self.board.board_data[temp_row_index][column_index] == num:
+                self.board.board_data[row_index][column_index] = None
+                self.board.board_data[temp_row_index][column_index] = 2 * num
+                self.score += 2 * num
+
+                self._add_damage_to_score_text_group(num, score_rect_center)
+
+                skip_counter += 1
+        return skip_counter
+
+    def _skip_none_values_in_column(self, merge_cond: Callable[[int], bool], next_index: Callable[[int], int],
+                                    skip_counter, temp_row_index, column_index):
+        while merge_cond(temp_row_index) and self.board.board_data[
+                temp_row_index][column_index] is None:
+            temp_row_index = next_index(temp_row_index)
+            skip_counter += 1
+        return skip_counter, temp_row_index
 
     def move_everything_vertically(self, direction):
         for column_index in range(self._num_of_fields_in_row):
@@ -190,6 +215,11 @@ class Game():
         self._last_board_data = copy.deepcopy(self.board.board_data)
         self._last_score = self.score
         self.if_undo_move = False
+
+    def _add_damage_to_score_text_group(self, num, score_rect_center: tuple):
+        if score_rect_center:
+            damage = '+' + str(2 * num)
+            self._add_to_score_text_group(damage, score_rect_center)
 
     def check_for_win(self):
         for row in self.board.board_data:

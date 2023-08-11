@@ -33,7 +33,7 @@ undo_button = None
 
 best_score = utilities.read_best_score_from_file("best_score.txt")
 
-board = Board([[1024, 1024, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]], game_start=True)
+board = Board(game_start=True)
 game = Game(board)
 
 run = True
