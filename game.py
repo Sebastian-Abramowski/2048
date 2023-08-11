@@ -56,24 +56,30 @@ class Game():
                                 self._add_to_score_text_group(damage, score_rect_center)
 
                             skip_counter += 1
-            # move fields to the right/left if it's possible
-            self.move_everything_horizontally(row_index, direction)
+        # move fields to the right/left if it's possible
+        self.move_everything_horizontally(direction)
 
         if board_before_changing != self.board.board_data:
             if_board_changed = True
 
         return if_board_changed
 
-    def move_everything_horizontally(self, row_index, direction):
+    def move_everything_horizontally(self, direction):
         # Moves everything to the right or left as much as it can
-        row = self.board.board_data[row_index]
-        filter_none_values = [num for num in row if num is not None]
-        fill_none_values = [None] * (self._num_of_fields_in_row - len(filter_none_values))
+        for row_index in range(self._num_of_fields_in_row):
+            row = self.board.board_data[row_index]
+            fields_values = [num for num in row if num is not None]
+            none_values = [None] * (self._num_of_fields_in_row - len(fields_values))
 
+            self._update_row_with_new_values(row_index, none_values, fields_values,
+                                             direction)
+
+    def _update_row_with_new_values(self, row_index, none_values: list, fields_values: list,
+                                    direction: str):
         if direction == "right":
-            self.board.board_data[row_index] = fill_none_values + filter_none_values
+            self.board.board_data[row_index] = none_values + fields_values
         elif direction == "left":
-            self.board.board_data[row_index] = filter_none_values + fill_none_values
+            self.board.board_data[row_index] = fields_values + none_values
 
     def move_vertically(self, direction, score_rect_center=None):
         self._save_current_state()
@@ -112,28 +118,34 @@ class Game():
                                 self._add_to_score_text_group(damage, score_rect_center)
 
                             skip_counter += 1
-            # move fields up/down if it's possible
-            self.move_everything_vertically(column_index, direction)
+        # move fields up/down if it's possible
+        self.move_everything_vertically(direction)
 
         if board_before_changing != self.board.board_data:
             if_board_changed = True
 
         return if_board_changed
 
-    def move_everything_vertically(self, column_index, direction):
-        column = []
-        for row_index in range(self._num_of_fields_in_row):
-            column.append(self.board.board_data[row_index][column_index])
+    def move_everything_vertically(self, direction):
+        for column_index in range(self._num_of_fields_in_row):
+            column = []
+            for row_index in range(self._num_of_fields_in_row):
+                column.append(self.board.board_data[row_index][column_index])
 
-        filter_none_values = [num for num in column if num is not None]
-        fill_none_values = [None] * (self._num_of_fields_in_row - len(filter_none_values))
+            fields_values = [num for num in column if num is not None]
+            none_values = [None] * (self._num_of_fields_in_row - len(fields_values))
 
+            self._update_column_with_new_values(column_index, none_values, fields_values,
+                                                direction)
+
+    def _update_column_with_new_values(self, column_index, none_values: list, fields_values: list,
+                                       direction: str):
         if direction == "down":
-            new_column = fill_none_values + filter_none_values
+            new_column = none_values + fields_values
             for row_index in range(self._num_of_fields_in_row):
                 self.board.board_data[row_index][column_index] = new_column[row_index]
         elif direction == "up":
-            new_column = filter_none_values + fill_none_values
+            new_column = fields_values + none_values
             for row_index in range(self._num_of_fields_in_row):
                 self.board.board_data[row_index][column_index] = new_column[row_index]
 
@@ -159,10 +171,7 @@ class Game():
 
     def update_scores_in_file(self, file_path):
         player_or_ai = None
-        if self.if_ai_play:
-            player_or_ai = "ai"
-        else:
-            player_or_ai = "player"
+        player_or_ai = "ai" if self.if_ai_play else "player"
 
         if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, player_or_ai):
             utilities.update_best_score_in_file(

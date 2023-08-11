@@ -66,7 +66,8 @@ while run:
     game.score_text_group.draw(screen)
 
     if game.check_for_win() and not game.if_skip_win and not game.if_ai_play:
-        draw_end_of_game_info(screen, if_win=True)
+        draw_end_of_game_info(screen, "YOU WON!", "Press 'space' to continue",
+                              constants.GREEN)
         game.if_blocked_moving = True
 
     if best_score < game.score:

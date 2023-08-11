@@ -34,24 +34,16 @@ class Board():
                                                      constants.SCREEN_HEIGHT - initial_y - constants.PADDING))
 
     def _draw_fields(self, surface, initial_y, field_width, field_height):
-        for i, row in enumerate(self.board_data):
-            field_y = initial_y + (i + 1) * constants.BOARD_PADDING + i * field_height
-            for j, num in enumerate(row):
-                if num is None:
-                    color = constants.LIGHT_GREY
-                else:
-                    color = constants.COLORS_FOR_NUMBERS.get(num, constants.YELLOW)
-                field_x = constants.PADDING + (j + 1) * constants.BOARD_PADDING + j * field_width
-                field_rect = pygame.Rect(field_x, field_y, field_width, field_height)
-                pygame.draw.rect(surface, color, field_rect)
-                field_center = field_rect.center
+        for row_index, row in enumerate(self.board_data):
+            # Calculate y coordinate for each row of fields
+            field_y = initial_y + (row_index + 1) * constants.BOARD_PADDING + row_index * field_height
+            for column_index, num in enumerate(row):
+                color = self._get_color_for_field(num)
 
-                if num is not None:
-                    color = constants.DARK_GREY if num in [2, 4] else constants.WHITE
-                    field_num_width, field_num_height = utilities.get_size_of_text(str(num), constants.MEDIUM_FONT)
-                    utilities.draw_text(surface, str(num), constants.MEDIUM_FONT, color,
-                                        field_center[0] - field_num_width // 2,
-                                        field_center[1] - field_num_height // 2)
+                field_center = self._draw_field(surface, color, field_width, field_height,
+                                                column_index, field_y)
+
+                self._draw_number_on_field(surface, num, field_center)
 
     def _calc_width_height_of_field(self, initial_y):
         board_width = constants.SCREEN_WIDTH - 2 * constants.PADDING
@@ -86,6 +78,29 @@ class Board():
         empty_fields = []
         for i, row in enumerate(self.board_data):
             for j, num in enumerate(row):
-                if num is None:
+                if not num:
                     empty_fields.append((i, j))
         return empty_fields
+
+    def _get_color_for_field(self, num):
+        if num is None:
+            color = constants.LIGHT_GREY
+        else:
+            color = constants.COLORS_FOR_NUMBERS.get(num, constants.YELLOW)
+        return color
+
+    def _draw_number_on_field(self, surface, num, field_center):
+        if num:
+            color = constants.DARK_GREY if num in [2, 4] else constants.WHITE
+            field_num_width, field_num_height = utilities.get_size_of_text(str(num), constants.MEDIUM_FONT)
+            utilities.draw_text(surface, str(num), constants.MEDIUM_FONT, color,
+                                field_center[0] - field_num_width // 2,
+                                field_center[1] - field_num_height // 2)
+
+    def _draw_field(self, surface, color, field_width, field_height, column_index, field_y):
+        field_x = constants.PADDING + (column_index + 1) * constants.BOARD_PADDING + column_index * field_width
+        field_rect = pygame.Rect(field_x, field_y, field_width, field_height)
+        pygame.draw.rect(surface, color, field_rect)
+        field_center = field_rect.center
+
+        return field_center
