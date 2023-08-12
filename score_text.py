@@ -2,7 +2,8 @@ import pygame
 
 
 class ScoreText(pygame.sprite.Sprite):
-    def __init__(self, x, y, damage, color, font):
+    def __init__(self, x: int, y: int, damage: str, color: tuple[int, int, int],
+                 font: pygame.font.Font):
         pygame.sprite.Sprite.__init__(self)
         self.font = font
         self.image = self.font.render(damage, True, color)
@@ -12,7 +13,7 @@ class ScoreText(pygame.sprite.Sprite):
         self.creation_time = pygame.time.get_ticks()
         self.cooldown = 200
 
-    def update(self):
+    def update(self) -> None:
         # move damage text up
         self.rect.y -= 2
 

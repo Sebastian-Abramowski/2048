@@ -4,14 +4,14 @@ import pygame
 from button import Button
 
 
-def draw_game_title(surface, game_title):
+def draw_game_title(surface, game_title: str) -> tuple[int, int]:
     text_width, text_height = utilities.draw_text(surface, game_title, constants.HUGE_FONT,
                                                   constants.DARK_GREY, constants.PADDING, constants.PADDING)
 
     return text_width, text_height
 
 
-def draw_helping_text(surface, big_text_height):
+def draw_helping_text(surface: pygame.Surface, big_text_height: int) -> tuple[int, int]:
     coord_y_of_info_text = constants.PADDING + big_text_height
     info_text_width1, info_text_height = utilities.draw_text(surface, "Join the number and get to the ",
                                                              constants.NORMAL_LIGHT_FONT,
@@ -24,7 +24,8 @@ def draw_helping_text(surface, big_text_height):
     return info_text_width, info_text_height
 
 
-def draw_score_info_background(surface, big_text_width):
+def draw_score_info_background(surface: pygame.Surface,
+                               big_text_width: int) -> tuple[tuple[int, int], int, int, int, int]:
     coord_x_of_score_info = 2 * constants.PADDING + big_text_width
     rect_on_left = pygame.Rect(coord_x_of_score_info, constants.PADDING,
                                constants.SCORE_BOX_WIDTH, constants.SCORE_BOX_HEIGHT)
@@ -48,8 +49,8 @@ def draw_score_info_background(surface, big_text_width):
             coord_y_of_scores_info, score_text_height, best_score_text_height]
 
 
-def draw_scores(surface, score, best_score, coord_x_of_score_info,
-                coord_y_of_scores_info, score_text_height, best_score_text_height):
+def draw_scores(surface: pygame.Surface, score: int, best_score: int, coord_x_of_score_info: int,
+                coord_y_of_scores_info: int, score_text_height: int, best_score_text_height: int) -> None:
     score_width, _ = utilities.get_size_of_text(str(score), constants.NORMAL_FONT)
     utilities.draw_text(surface, str(score), constants.NORMAL_FONT, constants.WHITE,
                         coord_x_of_score_info + (constants.SCORE_BOX_WIDTH // 2) - (score_width // 2),
@@ -62,8 +63,9 @@ def draw_scores(surface, score, best_score, coord_x_of_score_info,
                         coord_y_of_scores_info + best_score_text_height + 5)
 
 
-def draw_game_info(surface, restart_button, restart_button_img, undo_button, undo_button_img,
-                   score, best_score):
+def draw_game_info(surface: pygame.Surface, restart_button: Button, restart_button_img: pygame.Surface,
+                   undo_button: Button, undo_button_img: pygame.Surface,
+                   score: int, best_score: int) -> tuple[Button, Button, tuple[int, int]]:
     # Draw "2048"
     big_text_width, big_text_height = draw_game_title(surface, "2048")
 
@@ -93,7 +95,8 @@ def draw_game_info(surface, restart_button, restart_button_img, undo_button, und
     return restart_button, undo_button, background_score_rect_center
 
 
-def draw_end_of_game_info(surface, text, secondary_text, color):
+def draw_end_of_game_info(surface: pygame.Surface, text: str, secondary_text: str,
+                          color: tuple[int, int, int]) -> None:
     text_width, text_height = utilities.get_size_of_text(text, constants.BIG_FONT)
     text_x = (constants.SCREEN_WIDTH - text_width) // 2
     text_y = (constants.SCREEN_HEIGHT - text_height) // 2 + 35

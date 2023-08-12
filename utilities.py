@@ -1,28 +1,30 @@
 import pygame
 import csv
+from typing import Union
 
 
-def draw_text(surface, text, font, text_color, x, y):
+def draw_text(surface: pygame.Surface, text: str, font: pygame.font.Font,
+              text_color: tuple[int, int, int], x: int, y: int) -> tuple[int, int]:
     img = font.render(text, True, text_color)
     surface.blit(img, (x, y))
 
     return img.get_width(), img.get_height()
 
 
-def get_size_of_text(text, font):
+def get_size_of_text(text: str, font: pygame.font.Font) -> tuple[int, int]:
     img = font.render(text, True, (0, 0, 0))
 
     return img.get_width(), img.get_height()
 
 
-def scale_img(image, scale):
+def scale_img(image: pygame.Surface, scale: Union[float, int]):
     width = image.get_width()
     height = image.get_height()
     new_iamge = pygame.transform.scale(image, (width * scale, height * scale))
     return new_iamge
 
 
-def read_best_score_from_file(file_path):
+def read_best_score_from_file(file_path) -> int:
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
 
@@ -33,7 +35,7 @@ def read_best_score_from_file(file_path):
         return max(scores)
 
 
-def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str):
+def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str) -> int:
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
         data = list(csvreader)
@@ -43,7 +45,7 @@ def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str):
             return int(data[1][1])
 
 
-def update_best_score_in_file(file_path, new_best_score, if_ai):
+def update_best_score_in_file(file_path, new_best_score: int, if_ai: bool) -> None:
     existing_data = []
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
