@@ -113,3 +113,10 @@ class Board():
         field_center = field_rect.center
 
         return field_center
+
+    def evaluate(self) -> int:
+        return self._get_max_value_in_board()
+
+    def _get_max_value_in_board(self) -> int:
+        values = [num for row in self.board_data for num in row if num]
+        return max(values)

@@ -1,6 +1,7 @@
 import pygame
 import constants
 import utilities
+from expectimax import expectimax
 from board import Board
 from game import Game
 from info_printer import draw_game_info, draw_end_of_game_info
@@ -35,6 +36,7 @@ best_score = utilities.read_best_score_from_file(constants.SCORES_FILE_PATH)
 
 board = Board(game_start=True)
 game = Game(board)
+game.if_ai_play = True
 
 run = True
 while run:
@@ -76,6 +78,12 @@ while run:
         utilities.update_best_score_in_file(constants.SCORES_FILE_PATH, game.score, game.if_ai_play)
         best_score = game.score
 
+    # AI move
+    if game.if_ai_play and not game.if_moving_is_blocked and not game.if_blocked:
+        _, best_direction = expectimax(game.board, 3, True, game)
+        game.move(best_direction, if_save_last_move=False)
+        game.board.add_new_random_field()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game.update_scores_in_file(constants.SCORES_FILE_PATH)
@@ -83,21 +91,21 @@ while run:
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
         if event.type == pygame.KEYDOWN:
-            if not game.if_moving_is_blocked:
+            if not game.if_moving_is_blocked and not game.if_ai_play:
                 if event.key in [pygame.K_a, pygame.K_LEFT]:
-                    if game.move_horiziontally("left", score_rect_center):
+                    if game.move("left", score_rect_center):
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    if game.move_horiziontally("right", score_rect_center):
+                    if game.move("right", score_rect_center):
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_w, pygame.K_UP]:
-                    if game.move_vertically("up", score_rect_center):
+                    if game.move("up", score_rect_center):
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_s, pygame.K_DOWN]:
-                    if game.move_vertically("down", score_rect_center):
+                    if game.move("down", score_rect_center):
                         game.board.add_new_random_field()
                         merge_sound.play()
             if event.key == pygame.K_ESCAPE:

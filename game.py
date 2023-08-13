@@ -21,6 +21,15 @@ class Game():
         self._last_board_data = None
         self._last_score = None
 
+    def move(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
+             if_save_last_move: bool = True) -> bool:
+        if direction in ["right", "left"]:
+            return self.move_horiziontally(direction, score_rect_center=score_rect_center,
+                                           if_save_last_move=if_save_last_move)
+        else:
+            return self.move_vertically(direction, score_rect_center=score_rect_center,
+                                        if_save_last_move=if_save_last_move)
+
     def move_horiziontally(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
                            if_save_last_move: bool = True) -> bool:
         if if_save_last_move:
@@ -33,7 +42,7 @@ class Game():
             self._merge_fields_in_row(row_index, direction, score_rect_center)
 
         # move fields to the right/left if it's possible
-        self.move_everything_horizontally(direction)
+        self._move_everything_horizontally(direction)
 
         if board_before_changing != self.board.board_data:
             if_board_changed = True
@@ -81,7 +90,7 @@ class Game():
                 skip_counter += 1
         return skip_counter
 
-    def move_everything_horizontally(self, direction: str) -> None:
+    def _move_everything_horizontally(self, direction: str) -> None:
         # Moves everything to the right or left as much as it can
         for row_index in range(self._num_of_fields_in_row):
             row = self.board.board_data[row_index]
@@ -110,7 +119,7 @@ class Game():
             self._merge_fields_in_column(column_index, direction, score_rect_center)
 
         # move fields up/down if it's possible
-        self.move_everything_vertically(direction)
+        self._move_everything_vertically(direction)
 
         if board_before_changing != self.board.board_data:
             if_board_changed = True
@@ -160,7 +169,7 @@ class Game():
             skip_counter += 1
         return skip_counter, temp_row_index
 
-    def move_everything_vertically(self, direction: str) -> None:
+    def _move_everything_vertically(self, direction: str) -> None:
         for column_index in range(self._num_of_fields_in_row):
             column = []
             for row_index in range(self._num_of_fields_in_row):
@@ -232,15 +241,17 @@ class Game():
             damage = '+' + str(2 * num)
             self._add_to_score_text_group(damage, score_rect_center)
 
-    def check_for_win(self) -> bool:
-        for row in self.board.board_data:
+    def check_for_win(self, board: Board = None) -> bool:
+        board_data = self.board.board_data if not board else board.board_data
+        for row in board_data:
             for num in row:
                 if num == 2048:
                     return True
         return False
 
-    def check_if_blocked(self) -> bool:
-        new_board = copy.deepcopy(self.board)
+    def check_if_blocked(self, board: Board = None) -> bool:
+        board = self.board if not board else board
+        new_board = copy.deepcopy(board)
         new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
 
         if_moved_right = new_game.move_horiziontally("right", if_save_last_move=False)
@@ -253,6 +264,15 @@ class Game():
             return False
         return True
 
+    def check_if_able_to_move(self, board: Board, direction: str) -> bool:
+        new_board = copy.deepcopy(board)
+        new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
+
+        if direction in ["right", "left"]:
+            return new_game.move_horiziontally(direction, if_save_last_move=False)
+        else:
+            return new_game.move_vertically(direction, if_save_last_move=False)
+
     def restart_game(self, file_path_to_best_scores) -> None:
         self.update_scores_in_file(file_path_to_best_scores)
         self.score = 0
@@ -262,3 +282,10 @@ class Game():
         self.if_blocked = False
         self.if_moving_is_blocked = False
         self.if_skip_win = True
+        # self.if_ai_play = False
+
+    def get_copy_with_board(self):
+        new_board = copy.deepcopy(self.board)
+        new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
+
+        return new_game

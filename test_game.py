@@ -10,7 +10,7 @@ def test_move_right_without_none_between():
                    [None] * 4,
                    [2, 2, 2, 2]])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [None] * 4,
@@ -23,7 +23,7 @@ def test_move_right_with_none_between():
                    [2, None, 2, None],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [
         [None] * 4,
         [None] * 4,
@@ -37,7 +37,7 @@ def test_just_move_right():
                    [2, 8, 2, None],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [None, 2, 8, 2],
@@ -54,7 +54,7 @@ def test_move_right_blocked():
                    [2, 8, 4, 2],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is False
+    assert game.move("right") is False
     assert board.board_data == starting_board
 
 
@@ -64,7 +64,7 @@ def test_move_right_partially_blocked():
                    [2, None, 8, 2],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [None, 2, 8, 2],
@@ -77,7 +77,7 @@ def test_move_right_double_merging():
                    [2, 2, 4, 4],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [None, None, 4, 8],
@@ -95,7 +95,7 @@ def test_move_right_ultimate_test():
         num_of_fields_in_row=6,
     )
     game = Game(board, num_of_fields_in_row=6)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [
         [None, None, None, None, None, 4],
         [None, None, None, 4, 8, 4],
@@ -111,7 +111,7 @@ def test_move_right_order():
                    [None, 2, 2, 2],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("right") is True
+    assert game.move("right") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [None, None, 2, 4],
@@ -127,7 +127,7 @@ def test_move_left_without_none_between():
                    [None, None, None, 4],
                    [2, 2, 2, 2]])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [[None] * 4,
                                 [4, None, None, None],
                                 [4, None, None, None],
@@ -140,7 +140,7 @@ def test_move_left_with_none_between():
                    [2, None, 2, None],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [
         [None] * 4,
         [None] * 4,
@@ -154,7 +154,7 @@ def test_just_move_left():
                    [None, 8, 2, 4],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [8, 2, 4, None],
@@ -171,7 +171,7 @@ def test_move_left_blocked():
                    [2, 8, 4, 2],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is False
+    assert game.move("left") is False
     assert board.board_data == starting_board
 
 
@@ -181,7 +181,7 @@ def test_move_left_partially_blocked():
                    [2, 8, None, 2],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [2, 8, 2, None],
@@ -194,7 +194,7 @@ def test_move_left_double_merging():
                    [2, 2, 4, 4],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [4, 8, None, None],
@@ -212,7 +212,7 @@ def test_move_left_ultimate_test():
         num_of_fields_in_row=6,
     )
     game = Game(board, num_of_fields_in_row=6)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [
         [4, None, None, None, None, None],
         [4, 8, 4, None, None, None],
@@ -228,7 +228,7 @@ def test_move_left_order():
                    [2, 2, 2, None],
                    [None] * 4])
     game = Game(board)
-    assert game.move_horiziontally("left") is True
+    assert game.move("left") is True
     assert board.board_data == [[None] * 4,
                                 [None] * 4,
                                 [4, 2, None, None],
@@ -244,7 +244,7 @@ def test_move_up_without_none_between():
                    [None, 2, None, None],
                    [None, 2, None, None]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[None, 4, None, None],
                                 [None, 4, None, None],
                                 [None, None, None, None],
@@ -257,7 +257,7 @@ def test_move_up_with_none_between():
                    [None, None, None, None],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[4, None, None, 8],
                                 [None, None, None, None],
                                 [None, None, None, None],
@@ -270,7 +270,7 @@ def test_just_move_up():
                    [4, None, None, None],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[4, None, None, 16],
                                 [2, None, None, 4],
                                 [None, None, None, None],
@@ -287,7 +287,7 @@ def test_move_up_blocked():
                    [4, None, None, 8],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("up") is False
+    assert game.move("up") is False
     assert board.board_data == starting_board
 
 
@@ -297,7 +297,7 @@ def test_move_up_partially_blocked():
                    [8, None, None, None],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[2, None, None, 16],
                                 [8, None, None, 2],
                                 [2, None, None, 4],
@@ -310,7 +310,7 @@ def test_move_up_double_merging():
                    [4, None, None, 2],
                    [4, None, None, 2]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[4, None, None, 4],
                                 [8, None, None, 4],
                                 [None, None, None, None],
@@ -327,7 +327,7 @@ def test_move_up_ultimate_test():
          [2, 2, 32, 32, 32, 16]]
     )
     game = Game(board, num_of_fields_in_row=6)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [
         [4, 4, 64, 2, 4, 2],
         [None, 8, 2, 4, 16, 16],
@@ -343,7 +343,7 @@ def test_move_up_order():
                    [2, None, None, 4],
                    [None, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("up") is True
+    assert game.move("up") is True
     assert board.board_data == [[4, None, None, 8],
                                 [2, None, None, 4],
                                 [None, None, None, None],
@@ -359,7 +359,7 @@ def test_move_down_without_none_between():
                    [None, 2, None, None],
                    [None, 2, None, None]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [None, None, None, None],
                                 [None, 4, None, None],
@@ -372,7 +372,7 @@ def test_move_down_with_none_between():
                    [None, None, None, None],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [None, None, None, None],
                                 [None, None, None, None],
@@ -385,7 +385,7 @@ def test_just_move_down():
                    [None, None, None, None],
                    [None, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [None, None, None, None],
                                 [4, None, None, 16],
@@ -402,7 +402,7 @@ def test_move_down_blocked():
                    [4, None, None, 8],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("down") is False
+    assert game.move("down") is False
     assert board.board_data == starting_board
 
 
@@ -412,7 +412,7 @@ def test_move_down_partially_blocked():
                    [8, None, None, None],
                    [2, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [2, None, None, 16],
                                 [8, None, None, 2],
@@ -425,7 +425,7 @@ def test_move_down_double_merging():
                    [4, None, None, 2],
                    [4, None, None, 2]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [None, None, None, None],
                                 [4, None, None, 4],
@@ -442,7 +442,7 @@ def test_move_down_ultimate_test():
          [2, 2, 32, 32, None, 16]]
     )
     game = Game(board, num_of_fields_in_row=6)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [
         [None, None, 64, None, None, None],
         [None, None, 2, 2, None, None],
@@ -458,7 +458,7 @@ def test_move_down_order():
                    [2, None, None, 4],
                    [None, None, None, 4]])
     game = Game(board)
-    assert game.move_vertically("down") is True
+    assert game.move("down") is True
     assert board.board_data == [[None, None, None, None],
                                 [None, None, None, None],
                                 [2, None, None, 4],
