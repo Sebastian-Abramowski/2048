@@ -2,6 +2,7 @@ import constants
 import copy
 import utilities
 import pygame
+import numpy as np
 from board import Board
 from score_text import ScoreText
 from typing import Callable, Optional
@@ -35,19 +36,16 @@ class Game():
                            if_save_last_move: bool = True) -> bool:
         if if_save_last_move:
             self._save_current_state()
-
         if_board_changed = False
         board_before_changing = copy.deepcopy(self.board.board_data)
 
         for row_index in range(self._num_of_fields_in_row):
             self._merge_fields_in_row(row_index, direction, score_rect_center)
-
         # move fields to the right/left if it's possible
         self._move_everything_horizontally(direction)
 
-        if board_before_changing != self.board.board_data:
+        if not np.array_equal(board_before_changing, self.board.board_data):
             if_board_changed = True
-
         return if_board_changed
 
     def _merge_fields_in_row(self, row_index: int, direction: str,
@@ -112,19 +110,16 @@ class Game():
                         if_save_last_move: bool = True) -> bool:
         if if_save_last_move:
             self._save_current_state()
-
         if_board_changed = False
         board_before_changing = copy.deepcopy(self.board.board_data)
 
         for column_index in range(self._num_of_fields_in_row):
             self._merge_fields_in_column(column_index, direction, score_rect_center)
-
         # move fields up/down if it's possible
         self._move_everything_vertically(direction)
 
-        if board_before_changing != self.board.board_data:
+        if not np.array_equal(board_before_changing, self.board.board_data):
             if_board_changed = True
-
         return if_board_changed
 
     def _merge_fields_in_column(self, column_index: int, direction: str,
@@ -210,7 +205,7 @@ class Game():
 
     def undo_last_move(self) -> None:
         self.if_undo_move = True
-        if self._last_board_data:
+        if self._last_board_data is not None:
             self.board.board_data = self._last_board_data
             self.score = self._last_score
 
@@ -244,11 +239,7 @@ class Game():
 
     def check_for_win(self, board: Board = None) -> bool:
         board_data = self.board.board_data if not board else board.board_data
-        for row in board_data:
-            for num in row:
-                if num == 2048:
-                    return True
-        return False
+        return np.any(board_data == 2048)
 
     def check_if_blocked(self, board: Board = None) -> bool:
         board = self.board if not board else board

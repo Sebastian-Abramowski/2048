@@ -3,6 +3,7 @@ import constants
 import utilities
 import random
 import copy
+import numpy as np
 from typing import Union, Optional
 
 
@@ -11,7 +12,7 @@ class Board():
                  num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW):
         self.num_of_fields_in_row = num_of_fields_in_row
         board_data = self._get_empty_board() if not board_data else board_data
-        self.board_data = board_data
+        self.board_data = np.array(board_data, dtype=object)
         if game_start:
             self.add_new_random_field()
             self.add_new_random_field()
@@ -23,12 +24,7 @@ class Board():
         return new_board
 
     def __str__(self) -> str:
-        result = ""
-        for row in self.board_data:
-            str_row = [str(item) if item is not None else 'X' for item in row]
-            result += ' '.join(str_row)
-            result += '\n'
-        return result
+        return str(self.board_data)
 
     def draw(self, surface: pygame.Surface, initial_y: int) -> None:
         self._draw_board_background(surface, constants.DARK_GREY, initial_y)
@@ -115,8 +111,11 @@ class Board():
         return field_center
 
     def evaluate(self) -> int:
-        return self._get_max_value_in_board()
+        return self._get_max_value()
 
-    def _get_max_value_in_board(self) -> int:
+    def _get_max_value(self) -> int:
         values = [num for row in self.board_data for num in row if num]
         return max(values)
+
+    def _get_sum_of_values(self) -> int:
+        return np.sum(self.board_data)

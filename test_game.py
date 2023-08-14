@@ -1,3 +1,4 @@
+import numpy as np
 from board import Board
 from game import Game
 
@@ -11,10 +12,12 @@ def test_move_right_without_none_between():
                    [2, 2, 2, 2]])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [None] * 4,
-                                [None, None, 4, 4]]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [None] * 4,
+        [None, None, 4, 4]
+    ]) is True
 
 
 def test_move_right_with_none_between():
@@ -24,11 +27,12 @@ def test_move_right_with_none_between():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
         [None, None, None, 4],
-        [None] * 4]
+        [None] * 4
+    ]) is True
 
 
 def test_just_move_right():
@@ -38,10 +42,12 @@ def test_just_move_right():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [None, 2, 8, 2],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [None, 2, 8, 2],
+        [None] * 4
+    ]) is True
 
 
 def test_move_right_blocked():
@@ -55,7 +61,7 @@ def test_move_right_blocked():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is False
-    assert board.board_data == starting_board
+    assert np.array_equal(board.board_data, starting_board) is True
 
 
 def test_move_right_partially_blocked():
@@ -65,10 +71,12 @@ def test_move_right_partially_blocked():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [None, 2, 8, 2],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [None, 2, 8, 2],
+        [None] * 4]
+    ) is True
 
 
 def test_move_right_double_merging():
@@ -78,10 +86,12 @@ def test_move_right_double_merging():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [None, None, 4, 8],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [None, None, 4, 8],
+        [None] * 4]
+    ) is True
 
 
 def test_move_right_ultimate_test():
@@ -96,13 +106,14 @@ def test_move_right_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
     assert game.move("right") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [None, None, None, None, None, 4],
         [None, None, None, 4, 8, 4],
         [None, 2, 4, 8, 16, 32],
         [2, 4, 8, 16, 32, 64],
         [None, None, None, None, 4, 32],
         [None, None, None, None, 4, 4]]
+    ) is True
 
 
 def test_move_right_order():
@@ -112,10 +123,12 @@ def test_move_right_order():
                    [None] * 4])
     game = Game(board)
     assert game.move("right") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [None, None, 2, 4],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [None, None, 2, 4],
+        [None] * 4]
+    ) is True
 
 
 # TEST MOVING LEFT
@@ -128,10 +141,12 @@ def test_move_left_without_none_between():
                    [2, 2, 2, 2]])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [[None] * 4,
-                                [4, None, None, None],
-                                [4, None, None, None],
-                                [4, 4, None, None]]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [4, None, None, None],
+        [4, None, None, None],
+        [4, 4, None, None]]
+    ) is True
 
 
 def test_move_left_with_none_between():
@@ -141,11 +156,12 @@ def test_move_left_with_none_between():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
         [4, None, None, None],
         [None] * 4]
+    ) is True
 
 
 def test_just_move_left():
@@ -155,10 +171,12 @@ def test_just_move_left():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [8, 2, 4, None],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [8, 2, 4, None],
+        [None] * 4]
+    ) is True
 
 
 def test_move_left_blocked():
@@ -172,7 +190,7 @@ def test_move_left_blocked():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is False
-    assert board.board_data == starting_board
+    assert np.array_equal(board.board_data, starting_board) is True
 
 
 def test_move_left_partially_blocked():
@@ -182,10 +200,12 @@ def test_move_left_partially_blocked():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [2, 8, 2, None],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [2, 8, 2, None],
+        [None] * 4]
+    ) is True
 
 
 def test_move_left_double_merging():
@@ -195,10 +215,12 @@ def test_move_left_double_merging():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [4, 8, None, None],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [4, 8, None, None],
+        [None] * 4]
+    ) is True
 
 
 def test_move_left_ultimate_test():
@@ -213,13 +235,14 @@ def test_move_left_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
     assert game.move("left") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [4, None, None, None, None, None],
         [4, 8, 4, None, None, None],
         [2, 4, 8, 16, 32, None],
         [2, 4, 8, 16, 32, 64],
         [4, 32, None, None, None, None],
         [4, 4, None, None, None, None]]
+    ) is True
 
 
 def test_move_left_order():
@@ -229,10 +252,12 @@ def test_move_left_order():
                    [None] * 4])
     game = Game(board)
     assert game.move("left") is True
-    assert board.board_data == [[None] * 4,
-                                [None] * 4,
-                                [4, 2, None, None],
-                                [None] * 4]
+    assert np.array_equal(board.board_data, [
+        [None] * 4,
+        [None] * 4,
+        [4, 2, None, None],
+        [None] * 4]
+    ) is True
 
 
 # TEST MOVING UP
@@ -245,10 +270,12 @@ def test_move_up_without_none_between():
                    [None, 2, None, None]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[None, 4, None, None],
-                                [None, 4, None, None],
-                                [None, None, None, None],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [None, 4, None, None],
+        [None, 4, None, None],
+        [None, None, None, None],
+        [None, None, None, None]]
+    ) is True
 
 
 def test_move_up_with_none_between():
@@ -258,10 +285,12 @@ def test_move_up_with_none_between():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[4, None, None, 8],
-                                [None, None, None, None],
-                                [None, None, None, None],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [4, None, None, 8],
+        [None, None, None, None],
+        [None, None, None, None],
+        [None, None, None, None]]
+    ) is True
 
 
 def test_just_move_up():
@@ -271,10 +300,12 @@ def test_just_move_up():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[4, None, None, 16],
-                                [2, None, None, 4],
-                                [None, None, None, None],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [4, None, None, 16],
+        [2, None, None, 4],
+        [None, None, None, None],
+        [None, None, None, None]]
+    ) is True
 
 
 def test_move_up_blocked():
@@ -288,7 +319,7 @@ def test_move_up_blocked():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("up") is False
-    assert board.board_data == starting_board
+    assert np.array_equal(board.board_data, starting_board)
 
 
 def test_move_up_partially_blocked():
@@ -298,10 +329,12 @@ def test_move_up_partially_blocked():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[2, None, None, 16],
-                                [8, None, None, 2],
-                                [2, None, None, 4],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [2, None, None, 16],
+        [8, None, None, 2],
+        [2, None, None, 4],
+        [None, None, None, None]]
+    ) is True
 
 
 def test_move_up_double_merging():
@@ -311,10 +344,12 @@ def test_move_up_double_merging():
                    [4, None, None, 2]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[4, None, None, 4],
-                                [8, None, None, 4],
-                                [None, None, None, None],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [4, None, None, 4],
+        [8, None, None, 4],
+        [None, None, None, None],
+        [None, None, None, None]]
+    ) is True
 
 
 def test_move_up_ultimate_test():
@@ -328,13 +363,14 @@ def test_move_up_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
     assert game.move("up") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [4, 4, 64, 2, 4, 2],
         [None, 8, 2, 4, 16, 16],
         [None, 4, 4, 8, 32, None],
         [None, None, 8, 16, None, None],
         [None, None, 16, 32, None, None],
         [None, None, 32, None, None, None]]
+    ) is True
 
 
 def test_move_up_order():
@@ -344,10 +380,12 @@ def test_move_up_order():
                    [None, None, None, 4]])
     game = Game(board)
     assert game.move("up") is True
-    assert board.board_data == [[4, None, None, 8],
-                                [2, None, None, 4],
-                                [None, None, None, None],
-                                [None, None, None, None]]
+    assert np.array_equal(board.board_data, [
+        [4, None, None, 8],
+        [2, None, None, 4],
+        [None, None, None, None],
+        [None, None, None, None]]
+    ) is True
 
 
 # TEST MOVING DOWN
@@ -360,10 +398,12 @@ def test_move_down_without_none_between():
                    [None, 2, None, None]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [None, None, None, None],
-                                [None, 4, None, None],
-                                [None, 4, None, None]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [None, None, None, None],
+        [None, 4, None, None],
+        [None, 4, None, None]]
+    ) is True
 
 
 def test_move_down_with_none_between():
@@ -373,10 +413,12 @@ def test_move_down_with_none_between():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [None, None, None, None],
-                                [None, None, None, None],
-                                [4, None, None, 8]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [None, None, None, None],
+        [None, None, None, None],
+        [4, None, None, 8]]
+    ) is True
 
 
 def test_just_move_down():
@@ -386,10 +428,12 @@ def test_just_move_down():
                    [None, None, None, 4]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [None, None, None, None],
-                                [4, None, None, 16],
-                                [2, None, None, 4]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [None, None, None, None],
+        [4, None, None, 16],
+        [2, None, None, 4]]
+    ) is True
 
 
 def test_move_down_blocked():
@@ -403,7 +447,7 @@ def test_move_down_blocked():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("down") is False
-    assert board.board_data == starting_board
+    assert np.array_equal(board.board_data, starting_board) is True
 
 
 def test_move_down_partially_blocked():
@@ -413,10 +457,12 @@ def test_move_down_partially_blocked():
                    [2, None, None, 4]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [2, None, None, 16],
-                                [8, None, None, 2],
-                                [2, None, None, 4]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [2, None, None, 16],
+        [8, None, None, 2],
+        [2, None, None, 4]]
+    ) is True
 
 
 def test_move_down_double_merging():
@@ -426,10 +472,12 @@ def test_move_down_double_merging():
                    [4, None, None, 2]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [None, None, None, None],
-                                [4, None, None, 4],
-                                [8, None, None, 4]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [None, None, None, None],
+        [4, None, None, 4],
+        [8, None, None, 4]]
+    ) is True
 
 
 def test_move_down_ultimate_test():
@@ -443,13 +491,14 @@ def test_move_down_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
     assert game.move("down") is True
-    assert board.board_data == [
+    assert np.array_equal(board.board_data, [
         [None, None, 64, None, None, None],
         [None, None, 2, 2, None, None],
         [None, None, 4, 4, None, None],
         [None, 4, 8, 8, None, None],
         [None, 8, 16, 16, 4, 2],
         [4, 4, 32, 64, 16, 16]]
+    ) is True
 
 
 def test_move_down_order():
@@ -459,7 +508,9 @@ def test_move_down_order():
                    [None, None, None, 4]])
     game = Game(board)
     assert game.move("down") is True
-    assert board.board_data == [[None, None, None, None],
-                                [None, None, None, None],
-                                [2, None, None, 4],
-                                [4, None, None, 8]]
+    assert np.array_equal(board.board_data, [
+        [None, None, None, None],
+        [None, None, None, None],
+        [2, None, None, 4],
+        [4, None, None, 8]]
+    ) is True
