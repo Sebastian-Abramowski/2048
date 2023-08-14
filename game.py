@@ -5,7 +5,8 @@ import pygame
 import numpy as np
 from board import Board
 from score_text import ScoreText
-from typing import Callable, Optional
+from pathlib import Path
+from typing import Callable, Optional, Union
 
 
 class Game():
@@ -35,18 +36,19 @@ class Game():
     def move_horiziontally(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
                            if_save_last_move: bool = True) -> bool:
         if if_save_last_move:
-            self._save_current_state()
-        if_board_changed = False
-        board_before_changing = copy.deepcopy(self.board.board_data)
+            last_board_data = copy.deepcopy(self.board.board_data)
+            last_score = self.score
+        board_data_before_changing = copy.deepcopy(self.board.board_data)
 
         for row_index in range(self._num_of_fields_in_row):
             self._merge_fields_in_row(row_index, direction, score_rect_center)
         # move fields to the right/left if it's possible
         self._move_everything_horizontally(direction)
 
-        if not np.array_equal(board_before_changing, self.board.board_data):
-            if_board_changed = True
-        return if_board_changed
+        is_board_changed = self._check_if_board_changed(board_data_before_changing)
+        if is_board_changed and if_save_last_move:
+            self._save_previouos_state(last_board_data, last_score)
+        return is_board_changed
 
     def _merge_fields_in_row(self, row_index: int, direction: str,
                              score_rect_center: tuple[int, int]) -> None:
@@ -108,19 +110,21 @@ class Game():
 
     def move_vertically(self, direction: str, score_rect_center: tuple[int, int] = None,
                         if_save_last_move: bool = True) -> bool:
+        last_board_data, last_score = None, None
         if if_save_last_move:
-            self._save_current_state()
-        if_board_changed = False
-        board_before_changing = copy.deepcopy(self.board.board_data)
+            last_board_data = copy.deepcopy(self.board.board_data)
+            last_score = self.score
+        board_data_before_changing = copy.deepcopy(self.board.board_data)
 
         for column_index in range(self._num_of_fields_in_row):
             self._merge_fields_in_column(column_index, direction, score_rect_center)
         # move fields up/down if it's possible
         self._move_everything_vertically(direction)
 
-        if not np.array_equal(board_before_changing, self.board.board_data):
-            if_board_changed = True
-        return if_board_changed
+        is_board_changed = self._check_if_board_changed(board_data_before_changing)
+        if is_board_changed and if_save_last_move:
+            self._save_previouos_state(last_board_data, last_score)
+        return is_board_changed
 
     def _merge_fields_in_column(self, column_index: int, direction: str,
                                 score_rect_center: tuple[int, int]) -> None:
@@ -209,8 +213,7 @@ class Game():
             self.board.board_data = self._last_board_data
             self.score = self._last_score
 
-    def update_scores_in_file(self, file_path) -> None:
-        player_or_ai = None
+    def update_score_in_file(self, file_path: Union[Path, str]) -> None:
         player_or_ai = "ai" if self.if_ai_play else "player"
 
         if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, player_or_ai):
@@ -226,9 +229,9 @@ class Game():
         else:
             self.score_text_group.add(score_text)
 
-    def _save_current_state(self) -> None:
-        self._last_board_data = copy.deepcopy(self.board.board_data)
-        self._last_score = self.score
+    def _save_previouos_state(self, last_board_data: np.array, last_score: int) -> None:
+        self._last_board_data = last_board_data
+        self._last_score = last_score
         self.if_undo_move = False
 
     def _add_damage_to_score_text_group(self, num: int,
@@ -262,8 +265,8 @@ class Game():
 
         return new_game.move(direction, if_save_last_move=False)
 
-    def restart_game(self, file_path_to_best_scores) -> None:
-        self.update_scores_in_file(file_path_to_best_scores)
+    def restart_game(self, file_path_to_best_scores: Union[Path, str]) -> None:
+        self.update_score_in_file(file_path_to_best_scores)
         self.score = 0
         self.score_text_group.empty()
         board = Board(game_start=True)
@@ -280,3 +283,9 @@ class Game():
         new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
 
         return new_game
+
+    def _check_if_board_changed(self, board_data_before_changing: np.array) -> bool:
+        if_board_changed = False
+        if not np.array_equal(board_data_before_changing, self.board.board_data):
+            if_board_changed = True
+        return if_board_changed

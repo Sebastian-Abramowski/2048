@@ -90,7 +90,7 @@ while run:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game.update_scores_in_file(constants.SCORES_FILE_PATH)
+            game.update_score_in_file(constants.SCORES_FILE_PATH)
             run = False
         if event.type == pygame.MOUSEBUTTONUP:
             if_restart_game = False
@@ -117,7 +117,7 @@ while run:
                         game.board.add_new_random_field()
                         merge_sound.play()
             if event.key == pygame.K_ESCAPE:
-                game.update_scores_in_file(constants.SCORES_FILE_PATH)
+                game.update_score_in_file(constants.SCORES_FILE_PATH)
                 run = False
             if event.key == pygame.K_SPACE:
                 if game.if_moving_is_blocked:  # win case

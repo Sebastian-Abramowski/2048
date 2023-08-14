@@ -1,5 +1,6 @@
 import pygame
 import csv
+from pathlib import Path
 from typing import Union
 
 
@@ -24,7 +25,7 @@ def scale_img(image: pygame.Surface, scale: Union[float, int]):
     return new_iamge
 
 
-def read_best_score_from_file(file_path) -> int:
+def read_best_score_from_file(file_path: Union[Path, str]) -> int:
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
 
@@ -35,7 +36,7 @@ def read_best_score_from_file(file_path) -> int:
         return max(scores)
 
 
-def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str) -> int:
+def read_best_player_or_ai_score_from_file(file_path: Union[Path, str], player_or_ai: str) -> int:
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
         data = list(csvreader)
@@ -45,7 +46,7 @@ def read_best_player_or_ai_score_from_file(file_path, player_or_ai: str) -> int:
             return int(data[1][1])
 
 
-def update_best_score_in_file(file_path, new_best_score: int, if_ai: bool) -> None:
+def update_best_score_in_file(file_path: Union[Path, str], new_best_score: int, if_ai: bool) -> None:
     existing_data = []
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)

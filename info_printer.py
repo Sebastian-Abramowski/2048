@@ -4,7 +4,7 @@ import pygame
 from button import Button
 
 
-def draw_game_title(surface, game_title: str) -> tuple[int, int]:
+def draw_game_title(surface: pygame.Surface, game_title: str) -> tuple[int, int]:
     text_width, text_height = utilities.draw_text(surface, game_title, constants.HUGE_FONT,
                                                   constants.DARK_GREY, constants.PADDING, constants.PADDING)
 
