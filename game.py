@@ -17,6 +17,7 @@ class Game():
         self.if_skip_win = False
         self.if_moving_is_blocked = False
         self.if_blocked = False
+        self.if_started = False
         self._num_of_fields_in_row = num_of_fields_in_row
         self._last_board_data = None
         self._last_score = None
@@ -268,10 +269,7 @@ class Game():
         new_board = copy.deepcopy(board)
         new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
 
-        if direction in ["right", "left"]:
-            return new_game.move_horiziontally(direction, if_save_last_move=False)
-        else:
-            return new_game.move_vertically(direction, if_save_last_move=False)
+        return new_game.move(direction, if_save_last_move=False)
 
     def restart_game(self, file_path_to_best_scores) -> None:
         self.update_scores_in_file(file_path_to_best_scores)
@@ -281,8 +279,10 @@ class Game():
         self.board = board
         self.if_blocked = False
         self.if_moving_is_blocked = False
-        self.if_skip_win = True
-        # self.if_ai_play = False
+        self.if_ai_play = False
+        self.if_started = False
+        self._last_board_data = None
+        self._last_score = None
 
     def get_copy_with_board(self):
         new_board = copy.deepcopy(self.board)

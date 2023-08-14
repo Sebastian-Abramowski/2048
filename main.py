@@ -1,10 +1,10 @@
 import pygame
 import constants
 import utilities
+import info_printer
 from expectimax import expectimax
 from board import Board
 from game import Game
-from info_printer import draw_game_info, draw_end_of_game_info
 
 pygame.init()
 
@@ -36,14 +36,13 @@ best_score = utilities.read_best_score_from_file(constants.SCORES_FILE_PATH)
 
 board = Board(game_start=True)
 game = Game(board)
-game.if_ai_play = True
 
 run = True
 while run:
     clock.tick(constants.FPS)
     screen.fill(constants.BACKGROUND_COLOR)
 
-    restart_button, undo_button, score_rect_center = draw_game_info(
+    restart_button, undo_button, score_rect_center = info_printer.draw_game_info(
         screen,
         restart_button, restart_button_img,
         undo_button, undo_button_img,
@@ -57,21 +56,26 @@ while run:
 
         if_restart_game = True
 
-    if_there_was_win_or_blockade = not game.if_blocked and not game.if_moving_is_blocked
-    if undo_button.draw(screen) and not game.if_undo_move and if_there_was_win_or_blockade:
+    if_there_was_no_win_or_blockade = not game.if_blocked and not game.if_moving_is_blocked
+    if undo_button.draw(screen) and not game.if_undo_move and if_there_was_no_win_or_blockade:
         game.undo_last_move()
+
+    if not game.if_started:
+        info_printer.draw_helping_text_three_parts(screen, 5 * constants.PADDING - 10, "Press ", "'enter'",
+                                                   " for the bot to play", constants.SMALL_FONT2,
+                                                   constants.SMALL_LIGHT_FONT2)
 
     game.score_text_group.update()
     game.score_text_group.draw(screen)
 
     if game.check_for_win() and not game.if_skip_win and not game.if_ai_play:
-        draw_end_of_game_info(screen, "YOU WON!", "Press 'space' to continue",
-                              constants.GREEN)
+        info_printer.draw_end_of_game_info(screen, "YOU WON!", "Press 'space' to continue",
+                                           constants.GREEN)
         game.if_moving_is_blocked = True
 
     if game.check_if_blocked():
-        draw_end_of_game_info(screen, "GAME OVER!", "Press 'space' to restart",
-                              constants.BLACK)
+        info_printer.draw_end_of_game_info(screen, "GAME OVER!", "Press 'space' to restart",
+                                           constants.BLACK)
         game.if_blocked = True
 
     if best_score < game.score:
@@ -80,7 +84,7 @@ while run:
 
     # AI move
     if game.if_ai_play and not game.if_moving_is_blocked and not game.if_blocked:
-        _, best_direction = expectimax(game.board, 3, True, game)
+        _, best_direction = expectimax(game.board, 4, True, game)
         game.move(best_direction, if_save_last_move=False)
         game.board.add_new_random_field()
 
@@ -94,18 +98,22 @@ while run:
             if not game.if_moving_is_blocked and not game.if_ai_play:
                 if event.key in [pygame.K_a, pygame.K_LEFT]:
                     if game.move("left", score_rect_center):
+                        game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_d, pygame.K_RIGHT]:
                     if game.move("right", score_rect_center):
+                        game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_w, pygame.K_UP]:
                     if game.move("up", score_rect_center):
+                        game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_s, pygame.K_DOWN]:
                     if game.move("down", score_rect_center):
+                        game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
             if event.key == pygame.K_ESCAPE:
@@ -117,6 +125,10 @@ while run:
                     game.if_skip_win = True
                 if game.if_blocked:
                     game.restart_game(constants.SCORES_FILE_PATH)
+            if event.key == pygame.K_RETURN:  # enter, turn on the bot
+                if not game.if_started:
+                    game.if_started = True
+                    game.if_ai_play = True
 
     pygame.display.update()
 

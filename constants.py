@@ -37,6 +37,9 @@ BIG_FONT = font.Font("Assets/Roboto-Black.ttf", 100)
 NORMAL_FONT = font.Font("Assets/Roboto-Black.ttf", 30)
 NORMAL_LIGHT_FONT = font.Font("Assets/Roboto-Light.ttf", 30)
 SMALL_FONT = font.Font("Assets/Roboto-Black.ttf", 15)
+SMALL_LIGHT_FONT = font.Font("Assets/Roboto-Light.ttf", 15)
+SMALL_FONT2 = font.Font("Assets/Roboto-Black.ttf", 20)
+SMALL_LIGHT_FONT2 = font.Font("Assets/Roboto-Light.ttf", 20)
 MEDIUM_FONT = font.Font("Assets/Roboto-Black.ttf", 50)
 
 PADDING = 50

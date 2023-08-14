@@ -11,17 +11,25 @@ def draw_game_title(surface, game_title: str) -> tuple[int, int]:
     return text_width, text_height
 
 
-def draw_helping_text(surface: pygame.Surface, big_text_height: int) -> tuple[int, int]:
-    coord_y_of_info_text = constants.PADDING + big_text_height
-    info_text_width1, info_text_height = utilities.draw_text(surface, "Join the number and get to the ",
-                                                             constants.NORMAL_LIGHT_FONT,
+def draw_helping_text_two_parts(surface: pygame.Surface, y: int, text_part1: str, text_part2: str,
+                                font=constants.NORMAL_FONT, light_font=constants.NORMAL_LIGHT_FONT
+                                ) -> tuple[int, int]:
+    info_text_width1, info_text_height = utilities.draw_text(surface, text_part1,
+                                                             light_font,
                                                              constants.GREY, constants.PADDING,
-                                                             coord_y_of_info_text)
-    info_text_width2, _ = utilities.draw_text(surface, "2048 tile!", constants.NORMAL_FONT, constants.DARK_GREY,
-                                              constants.PADDING + info_text_width1, coord_y_of_info_text)
+                                                             y)
+    info_text_width2, _ = utilities.draw_text(surface, text_part2, font, constants.DARK_GREY,
+                                              constants.PADDING + info_text_width1, y)
     info_text_width = info_text_width1 + info_text_width2
 
     return info_text_width, info_text_height
+
+
+def draw_helping_text_three_parts(surface: pygame.Surface, y: int, text_part1: str, text_part2: str,
+                                  text_part3: str, font=constants.NORMAL_FONT,
+                                  light_font=constants.NORMAL_LIGHT_FONT) -> None:
+    text_width, _ = draw_helping_text_two_parts(surface, y, text_part1, text_part2, font, light_font)
+    utilities.draw_text(surface, text_part3, light_font, constants.GREY, constants.PADDING + text_width + 2, y)
 
 
 def draw_score_info_background(surface: pygame.Surface,
@@ -70,7 +78,8 @@ def draw_game_info(surface: pygame.Surface, restart_button: Button, restart_butt
     big_text_width, big_text_height = draw_game_title(surface, "2048")
 
     # Draw "Join the number and get to the 2048 tile!"
-    info_text_width, _ = draw_helping_text(surface, big_text_height)
+    info_text_width, _ = draw_helping_text_two_parts(surface, constants.PADDING + big_text_height,
+                                                     "Join the number and get to the ", "2048 tile!")
 
     # Draw boxes for information about score and the best score
     score_info = draw_score_info_background(surface, big_text_width)
