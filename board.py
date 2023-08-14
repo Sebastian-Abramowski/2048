@@ -111,11 +111,55 @@ class Board():
         return field_center
 
     def evaluate(self) -> int:
-        return self._get_max_value()
+        max_value, if_in_left_top_corner = self._get_max_value()
+        booster = 1 if not if_in_left_top_corner else 1000
+        return self._get_value_in_left_top_corner()
 
-    def _get_max_value(self) -> int:
+    def _get_value_in_left_top_corner(self):
+        if self.board_data[0][0] is None:
+            return -1
+        return self.board_data[0][0]
+
+    def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
-        return max(values)
+        max_value = max(values)
+        if_in_left_top_corner = self.board_data[0][0] == max_value
+        return max(values), if_in_left_top_corner
 
     def _get_sum_of_values(self) -> int:
-        return np.sum(self.board_data)
+        return sum([num for row in self.board_data for num in row if num])
+
+    def _get_num_of_empty_fields(self) -> int:
+        return len([field for row in self.board_data for field in row if not field])
+
+    def _evaluate_spreading(self) -> int:
+        evaluation_value = 0
+
+        def increase_eval_if_sorted_reversedly(values: np.array, eval_value: int) -> int:
+            # for 1 dimensional arrays
+            if not np.any(values == None):
+                if np.array_equal(values, np.sort(values)[::-1]):
+                    eval_value += np.size(values)
+            return eval_value
+
+        for i in range(constants.NUM_OF_FIELDS_IN_ROW):
+            eval_booster = 1 if i != 0 else 5
+            row = self.board_data[i, :]
+            copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
+            evaluation_value = increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
+                                                                  evaluation_value)
+            evaluation_value *= eval_booster
+
+        for j in range(constants.NUM_OF_FIELDS_IN_ROW):
+            column = self.board_data[:, j]
+            copied_column_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(column)
+            evaluation_value = increase_eval_if_sorted_reversedly(copied_column_without_nones_at_end,
+                                                                  evaluation_value)
+
+        diagonal_nw_se = np.diagonal(self.board_data)
+        copied_diagonal_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(
+            diagonal_nw_se)
+        evaluation_value = increase_eval_if_sorted_reversedly(copied_diagonal_without_nones_at_end,
+                                                              evaluation_value)
+
+        return evaluation_value

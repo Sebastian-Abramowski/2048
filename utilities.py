@@ -1,5 +1,6 @@
 import pygame
 import csv
+import numpy as np
 from pathlib import Path
 from typing import Union
 
@@ -60,3 +61,10 @@ def update_best_score_in_file(file_path: Union[Path, str], new_best_score: int, 
     with open(file_path, 'w', newline='\n') as file_handle:
         csvwriter = csv.writer(file_handle)
         csvwriter.writerows(existing_data)
+
+
+def remove_none_values_from_the_end_of_numpy_list(values: np.array) -> np.array:
+    # it returns copied array, not original
+    while np.size(values) > 0 and values[-1] is None:
+        values = np.delete(values, -1)
+    return values
