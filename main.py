@@ -68,12 +68,12 @@ while run:
     game.score_text_group.update()
     game.score_text_group.draw(screen)
 
-    if game.check_for_win() and not game.if_skip_win and not game.if_ai_play:
+    if Game.check_for_win(game.board) and not game.if_skip_win and not game.if_ai_play:
         info_printer.draw_end_of_game_info(screen, "YOU WON!", "Press 'space' to continue",
                                            constants.GREEN)
         game.if_moving_is_blocked = True
 
-    if game.check_if_blocked():
+    if Game.check_if_blocked(game.board):
         info_printer.draw_end_of_game_info(screen, "GAME OVER!", "Press 'space' to restart",
                                            constants.BLACK)
         game.if_blocked = True
@@ -84,7 +84,7 @@ while run:
 
     # AI move
     if game.if_ai_play and not game.if_moving_is_blocked and not game.if_blocked:
-        _, best_direction = expectimax(game.board, 3, True, game)
+        _, best_direction = expectimax(game.board, 3, True)
         game.move(best_direction, if_save_last_move=False)
         game.board.add_new_random_field()
 

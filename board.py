@@ -111,9 +111,7 @@ class Board():
         return field_center
 
     def evaluate(self) -> int:
-        max_value, if_in_left_top_corner = self._get_max_value()
-        booster = 1 if not if_in_left_top_corner else 1000
-        return self._get_value_in_left_top_corner()
+        return self._get_value_in_left_top_corner() * 5
 
     def _get_value_in_left_top_corner(self):
         if self.board_data[0][0] is None:
@@ -142,7 +140,7 @@ class Board():
                     eval_value += np.size(values)
             return eval_value
 
-        for i in range(constants.NUM_OF_FIELDS_IN_ROW):
+        for i in range(self.num_of_fields_in_row):
             eval_booster = 1 if i != 0 else 5
             row = self.board_data[i, :]
             copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
@@ -150,7 +148,7 @@ class Board():
                                                                   evaluation_value)
             evaluation_value *= eval_booster
 
-        for j in range(constants.NUM_OF_FIELDS_IN_ROW):
+        for j in range(self.num_of_fields_in_row):
             column = self.board_data[:, j]
             copied_column_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(column)
             evaluation_value = increase_eval_if_sorted_reversedly(copied_column_without_nones_at_end,

@@ -6,20 +6,17 @@ from game import Game
 sys.setrecursionlimit(5000)
 
 
-def expectimax(board: Board, depth: int, max_player: bool, game: Game) -> tuple[int, str]:
-    if depth == 0 or game.check_for_win(board) or game.check_if_blocked(board):
+def expectimax(board: Board, depth: int, max_player: bool) -> tuple[int, str]:
+    if depth == 0 or Game.check_for_win(board) or Game.check_if_blocked(board):
         return board.evaluate(), board
 
     if max_player:
         max_eval = float('-inf')
         best_direction = None
         for direction in ["up", "down", "left", "right"]:
-            if game.check_if_able_to_move(board, direction):
-                new_game = Game(copy.deepcopy(board))
-                new_board = new_game.board
-                new_game.move(direction, if_save_last_move=False)
-
-                evaluation, _ = expectimax(new_board, depth - 1, False, game)
+            if_sth_changed, new_board_after_movement = Game.check_if_able_to_move(board, direction)
+            if if_sth_changed:
+                evaluation, _ = expectimax(new_board_after_movement, depth - 1, False)
                 if evaluation > max_eval:
                     max_eval = evaluation
                     best_direction = direction
@@ -33,10 +30,10 @@ def expectimax(board: Board, depth: int, max_player: bool, game: Game) -> tuple[
             new_board_4 = copy.deepcopy(board)
 
             new_board_2.board_data[row_index][column_index] = 2
-            eval_2, _ = expectimax(new_board_2, depth - 1, True, game)
+            eval_2, _ = expectimax(new_board_2, depth - 1, True)
 
             new_board_4.board_data[row_index][column_index] = 4
-            eval_4, _ = expectimax(new_board_4, depth - 1, True, game)
+            eval_4, _ = expectimax(new_board_4, depth - 1, True)
 
             total_eval += 0.9 * eval_2 + 0.1 * eval_4
 
