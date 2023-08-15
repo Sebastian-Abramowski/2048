@@ -250,6 +250,7 @@ class Game():
         self.if_moving_is_blocked = False
         self.if_ai_play = False
         self.if_started = False
+        self.if_skip_win = False
         self._last_board_data = None
         self._last_score = None
 

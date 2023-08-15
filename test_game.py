@@ -517,6 +517,8 @@ def test_move_down_order():
 
 
 # --------------------------------------------------------
+
+
 def test_static_check_for_win():
     board = Board([[2, None, None, None],
                    [2, None, None, 4],
@@ -535,12 +537,12 @@ def test_static_check_if_blocked():
                    [2, None, None, 4],
                    [2, None, None, 4],
                    [None, None, None, 4]], num_of_fields_in_row=4)
-    assert not Game.check_if_blocked(board)
+    assert not Game.check_if_blocked(board, num_of_fields_in_single_row=4)
     board = Board([[16, 2, 64, 16],
                    [8, 4, 32, 2],
                    [4, 8, 16, 8],
                    [2, 16, 8, 4]], num_of_fields_in_row=4)
-    assert Game.check_if_blocked(board)
+    assert Game.check_if_blocked(board, num_of_fields_in_single_row=4)
 
 
 def test_static_check_if_able_to_move():
