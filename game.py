@@ -278,12 +278,6 @@ class Game():
         self._last_board_data = None
         self._last_score = None
 
-    def get_copy_with_board(self):
-        new_board = copy.deepcopy(self.board)
-        new_game = Game(new_board, num_of_fields_in_row=self._num_of_fields_in_row)
-
-        return new_game
-
     def _check_if_board_changed(self, board_data_before_changing: np.array) -> bool:
         if_board_changed = False
         if not np.array_equal(board_data_before_changing, self.board.board_data):

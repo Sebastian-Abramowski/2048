@@ -15,7 +15,7 @@ def expectimax(board: Board, depth: int, max_player: bool, game: Game) -> tuple[
         best_direction = None
         for direction in ["up", "down", "left", "right"]:
             if game.check_if_able_to_move(board, direction):
-                new_game = game.get_copy_with_board()
+                new_game = Game(copy.deepcopy(board))
                 new_board = new_game.board
                 new_game.move(direction, if_save_last_move=False)
 
