@@ -26,10 +26,12 @@ class Game():
 
     def move(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
              if_save_last_move: bool = True) -> bool:
+        self._validate_function_with_direction(direction)
+
         if direction in ["right", "left"]:
             return self.move_horiziontally(direction, score_rect_center=score_rect_center,
                                            if_save_last_move=if_save_last_move)
-        else:
+        elif direction in ["up", "down"]:
             return self.move_vertically(direction, score_rect_center=score_rect_center,
                                         if_save_last_move=if_save_last_move)
 
@@ -259,6 +261,12 @@ class Game():
         if not np.array_equal(board_data_before_changing, self.board.board_data):
             if_board_changed = True
         return if_board_changed
+
+    def _validate_function_with_direction(self, direction: str):
+        if direction not in ["left", "right", "up", "down"]:
+            error_message = (f"The direction can be either left, right, up or down. "
+                             f"You passed {direction}")
+            raise utilities.WrongUseOfFuncionError(error_message)
 
     @staticmethod
     def check_for_win(board: Board) -> bool:

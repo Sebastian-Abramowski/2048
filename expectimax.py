@@ -7,8 +7,8 @@ sys.setrecursionlimit(5000)
 
 
 def expectimax(board: Board, depth: int, max_player: bool) -> tuple[int, str]:
-    if depth == 0 or Game.check_for_win(board) or Game.check_if_blocked(board):
-        return board.evaluate(), board
+    if depth == 0 or Game.check_if_blocked(board):
+        return board.evaluate(), None
 
     if max_player:
         max_eval = float('-inf')

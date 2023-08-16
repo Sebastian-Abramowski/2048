@@ -68,3 +68,8 @@ def remove_none_values_from_the_end_of_numpy_list(values: np.array) -> np.array:
     while np.size(values) > 0 and values[-1] is None:
         values = np.delete(values, -1)
     return values
+
+
+class WrongUseOfFuncionError(Exception):
+    def __init__(self, text: str):
+        super().__init__(text)
