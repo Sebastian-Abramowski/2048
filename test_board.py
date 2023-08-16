@@ -56,20 +56,20 @@ def test_board_init2():
     assert num_of_not_empty_fields == 2
 
 
-def test_get_empty_board():
+def test_get_empty_list():
     board = Board(num_of_fields_in_row=4)
 
-    assert board._get_empty_board() == [
+    assert board._get_empty_list() == [
         [None, None, None, None],
         [None, None, None, None],
         [None, None, None, None],
         [None, None, None, None]
     ]
-    assert np.array_equal(board.board_data, board._get_empty_board())
+    assert np.array_equal(board.board_data, board._get_empty_list())
 
     board = Board(num_of_fields_in_row=6)
 
-    assert board._get_empty_board() == [
+    assert board._get_empty_list() == [
         [None, None, None, None, None, None],
         [None, None, None, None, None, None],
         [None, None, None, None, None, None],
@@ -77,7 +77,7 @@ def test_get_empty_board():
         [None, None, None, None, None, None],
         [None, None, None, None, None, None]
     ]
-    assert np.array_equal(board.board_data, board._get_empty_board())
+    assert np.array_equal(board.board_data, board._get_empty_list())
 
 
 def test_add_new_random_fields(monkeypatch):

@@ -11,7 +11,7 @@ class Board():
     def __init__(self, board_data: Optional[list[list[Union[int, None]]]] = None, game_start: bool = False,
                  num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW):
         self.num_of_fields_in_row = num_of_fields_in_row
-        board_data = self._get_empty_board() if not board_data else board_data
+        board_data = self._get_empty_list() if not board_data else board_data
         self.board_data = np.array(board_data, dtype=object)
         if game_start:
             self.add_new_random_field()
@@ -57,7 +57,11 @@ class Board():
         return (width_for_fields // self.num_of_fields_in_row,
                 height_for_fields // self.num_of_fields_in_row)
 
-    def _get_empty_board(self) -> list[list[None]]:
+    def _get_empty_list(self) -> list[list[None]]:
+        """
+        Returns two dimensional list filled with None values according
+        to number of fields in a row
+        """
         temp_board_data = []
         for _ in range(self.num_of_fields_in_row):
             temp_board_data.append([None] * self.num_of_fields_in_row)
@@ -112,9 +116,13 @@ class Board():
 
     def evaluate(self) -> int:
         _, if_in_left_top_corner = self._get_max_value()
-        corner_boost = 150 if if_in_left_top_corner else 0
 
-        return self._get_num_of_empty_fields() * 20 + self._evaluate_spreading() * 5 + corner_boost
+        corner_boost = 150 if if_in_left_top_corner else 0
+        penalty_for_blocked_fields = self._count_blocked_fields() * 50
+        empty_fields_score = self._get_num_of_empty_fields() * 20
+        spreading_score = self._evaluate_spreading() * 5
+
+        return empty_fields_score + spreading_score + corner_boost - penalty_for_blocked_fields
 
     def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
@@ -180,77 +188,104 @@ class Board():
 
         return evaluation_value
 
-    def _get_num_of_blocked_fields_in_corners(self):
+    def _count_blocked_fields(self):
+        blocked_fields = 0
+
+        blocked_fields += self._count_blocked_fields_along_borders_without_corners()
+        blocked_fields += self._count_blocked_fields_in_corners()
+        blocked_fields += self._count_blocked_fields_inside()
+
+        return blocked_fields
+
+    def _count_blocked_fields_in_corners(self):
         num_of_blocked_fields = 0
         max_index = self.num_of_fields_in_row - 1
 
         # check left top corner
-        if self.board_data[0][0] and self.board_data[0][1] and self.board_data[1][0]:
-            if 2 * self.board_data[0][0] <= self.board_data[0][1] and 2 * self.board_data[
-                    0][0] <= self.board_data[1][0]:
-                num_of_blocked_fields += 1
+        if self.board_data[0][0] and self.board_data[0][1] and self.board_data[1][0] and \
+                2 * self.board_data[0][0] <= self.board_data[0][1] and \
+                2 * self.board_data[0][0] <= self.board_data[1][0]:
+            num_of_blocked_fields += 1
 
         # check right top corner
-        if self.board_data[0][max_index] and self.board_data[0][max_index - 1] and self.board_data[1][max_index]:
-            if 2 * self.board_data[0][max_index] <= self.board_data[0][max_index - 1] and 2 * self.board_data[
-                    0][max_index] <= self.board_data[1][max_index]:
-                num_of_blocked_fields += 1
+        if self.board_data[0][max_index] and self.board_data[0][max_index - 1] and \
+                self.board_data[1][max_index] and \
+                2 * self.board_data[0][max_index] <= self.board_data[0][max_index - 1] and \
+                2 * self.board_data[0][max_index] <= self.board_data[1][max_index]:
+            num_of_blocked_fields += 1
 
         # check left down corner
-        if self.board_data[max_index][0] and self.board_data[max_index][1] and self.board_data[max_index - 1][0]:
-            if 2 * self.board_data[max_index][0] <= self.board_data[max_index - 1][
-                    0] and 2 * self.board_data[max_index][0] <= self.board_data[max_index][1]:
-                num_of_blocked_fields += 1
+        if self.board_data[max_index][0] and self.board_data[max_index][1] and \
+                self.board_data[max_index - 1][0] and \
+                2 * self.board_data[max_index][0] <= self.board_data[max_index - 1][0] and \
+                2 * self.board_data[max_index][0] <= self.board_data[max_index][1]:
+            num_of_blocked_fields += 1
 
         # check right down corner
-        if self.board_data[max_index][max_index] and self.board_data[max_index][max_index - 1] and self.board_data[
-                max_index - 1][max_index]:
-            if 2 * self.board_data[max_index][max_index] <= self.board_data[max_index][
-                    max_index - 1] and 2 * self.board_data[max_index][max_index] <= self.board_data[
-                        max_index - 1][max_index]:
-                num_of_blocked_fields += 1
+        if self.board_data[max_index][max_index] and self.board_data[max_index][max_index - 1] and \
+                self.board_data[max_index - 1][max_index] and \
+                2 * self.board_data[max_index][max_index] <= self.board_data[max_index][max_index - 1] and \
+                2 * self.board_data[max_index][max_index] <= self.board_data[max_index - 1][max_index]:
+            num_of_blocked_fields += 1
 
         return num_of_blocked_fields
 
-    def _get_num_of_blocked_fields_along_borders_without_corners(self):
+    def _count_blocked_fields_along_borders_without_corners(self):
         num_of_blocked_fields = 0
         max_index = self.num_of_fields_in_row - 1
 
         for i in range(1, max_index):
             # top border
-            if self.board_data[0][i] and self.board_data[0][i - 1] and self.board_data[0][
-                    i + 1] and self.board_data[1][i]:
-                if 2 * self.board_data[0][i] <= self.board_data[0][
-                    i - 1] and 2 * self.board_data[0][
-                        i] <= self.board_data[0][i + 1] and 2 * self.board_data[
-                            0][i] <= self.board_data[1][i]:
-                    num_of_blocked_fields += 1
+            if self.board_data[0][i] and self.board_data[0][i - 1] and self.board_data[0][i + 1] and \
+                    self.board_data[1][i] and 2 * self.board_data[0][i] <= self.board_data[0][i - 1] and \
+                    2 * self.board_data[0][i] <= self.board_data[0][i + 1] and \
+                    2 * self.board_data[0][i] <= self.board_data[1][i]:
+                num_of_blocked_fields += 1
 
             # bottom border
-            if self.board_data[max_index][i] and self.board_data[max_index][i - 1] and self.board_data[
-                    max_index][i + 1] and self.board_data[max_index - 1][i]:
-                if 2 * self.board_data[max_index][i] <= self.board_data[
-                    max_index][i - 1] and 2 * self.board_data[
-                        max_index][i] <= self.board_data[max_index][
-                            i + 1] and 2 * self.board_data[max_index][
-                                i] <= self.board_data[max_index - 1][i]:
-                    num_of_blocked_fields += 1
+            if self.board_data[max_index][i] and self.board_data[max_index][i - 1] and \
+                    self.board_data[max_index][i + 1] and self.board_data[max_index - 1][i] and \
+                    2 * self.board_data[max_index][i] <= self.board_data[max_index][i - 1] and \
+                    2 * self.board_data[max_index][i] <= self.board_data[max_index][i + 1] and \
+                    2 * self.board_data[max_index][i] <= self.board_data[max_index - 1][i]:
+                num_of_blocked_fields += 1
 
             # right border
-            if self.board_data[i][max_index] and self.board_data[i - 1][max_index] and self.board_data[
-                    i + 1][max_index] and self.board_data[i][max_index - 1]:
-                if 2 * self.board_data[i][max_index] <= self.board_data[i - 1][
-                        max_index] and 2 * self.board_data[i][max_index] <= self.board_data[
-                            i + 1][max_index] and 2 * self.board_data[i][
-                                max_index] <= self.board_data[i][max_index - 1]:
-                    num_of_blocked_fields += 1
+            if self.board_data[i][max_index] and self.board_data[i - 1][max_index] and \
+                    self.board_data[i + 1][max_index] and self.board_data[i][max_index - 1] and \
+                    2 * self.board_data[i][max_index] <= self.board_data[i - 1][max_index] and \
+                    2 * self.board_data[i][max_index] <= self.board_data[i + 1][max_index] and \
+                    2 * self.board_data[i][max_index] <= self.board_data[i][max_index - 1]:
+                num_of_blocked_fields += 1
 
             # left border
-            if self.board_data[i][0] and self.board_data[i - 1][0] and self.board_data[
-                    i + 1][0] and self.board_data[i][1]:
-                if 2 * self.board_data[i][0] <= self.board_data[i - 1][0] and 2 * self.board_data[
-                        i][0] <= self.board_data[i + 1][0] and 2 * self.board_data[
-                            i][0] <= self.board_data[i][1]:
+            if self.board_data[i][0] and self.board_data[i - 1][0] and self.board_data[i + 1][0] and \
+                    self.board_data[i][1] and \
+                    2 * self.board_data[i][0] <= self.board_data[i - 1][0] and \
+                    2 * self.board_data[i][0] <= self.board_data[i + 1][0] and \
+                    2 * self.board_data[i][0] <= self.board_data[i][1]:
+                num_of_blocked_fields += 1
+
+        return num_of_blocked_fields
+
+    def _count_blocked_fields_inside(self):
+        num_of_blocked_fields = 0
+        max_index = self.num_of_fields_in_row - 1
+
+        def is_blocked_around(row: int, col: int) -> None:
+            if self.board_data[row][col] and self.board_data[row - 1][col] and \
+                    self.board_data[row + 1][col] and self.board_data[row][col - 1] and \
+                    self.board_data[row][col + 1] and \
+                    2 * self.board_data[row][col] <= self.board_data[row - 1][col] and \
+                    2 * self.board_data[row][col] <= self.board_data[row + 1][col] and \
+                    2 * self.board_data[row][col] <= self.board_data[row][col - 1] and \
+                    2 * self.board_data[row][col] <= self.board_data[row][col + 1]:
+                return True
+            return False
+
+        for row_index in range(1, max_index):
+            for col_index in range(1, max_index):
+                if is_blocked_around(row_index, col_index):
                     num_of_blocked_fields += 1
 
         return num_of_blocked_fields

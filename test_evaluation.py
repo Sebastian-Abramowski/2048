@@ -95,18 +95,19 @@ def test_count_blocked_fields_empty_board():
         [None, None, None, None]
     ], num_of_fields_in_row=4)
 
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 0
-    board._get_num_of_blocked_fields_in_corners() == 0
+    assert board._count_blocked_fields_along_borders_without_corners() == 0
+    assert board._count_blocked_fields_in_corners() == 0
+    assert board._count_blocked_fields_inside() == 0
 
 
-def test_how_many_blocked_in_corners():
+def test_count_blocked_fields_in_corners():
     board = Board([
         [128, 512, 128, 2],
         [256, 128, 64, 8],
         [16, 64, 32, 4],
         [2, 16, 8, 2]
     ], num_of_fields_in_row=4)
-    assert board._get_num_of_blocked_fields_in_corners() == 4
+    assert board._count_blocked_fields_in_corners() == 4
 
     board = Board([
         [1024, 512, 128, 2],
@@ -114,17 +115,17 @@ def test_how_many_blocked_in_corners():
         [16, 64, None, 4],
         [8, 4, 8, 4]
     ], num_of_fields_in_row=4)
-    assert board._get_num_of_blocked_fields_in_corners() == 1
+    assert board._count_blocked_fields_in_corners() == 1
 
 
-def test_how_many_blocked_in_borders_without_corners_border_top():
+def test_count_blocked_in_borders_without_corners_border_top():
     board = Board([
         [1024, 2, 4, 8],
         [None, 128, 64, None],
         [None, None, None, None],
         [None, None, None, None]
     ], num_of_fields_in_row=4)
-    assert board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
     board = Board([
         [1024, 4, 2, 8],
@@ -132,17 +133,17 @@ def test_how_many_blocked_in_borders_without_corners_border_top():
         [None, None, None, None],
         [None, None, None, None]
     ], num_of_fields_in_row=4)
-    assert board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
 
-def test_how_many_blocked_in_borders_without_corners_border_bottom():
+def test_count_blocked_in_borders_without_corners_border_bottom():
     board = Board([
         [None, None, None, None],
         [None, None, None, None],
         [None, 64, 32, None],
         [16, 4, 8, 16]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
     board = Board([
         [None, None, None, None],
@@ -150,17 +151,17 @@ def test_how_many_blocked_in_borders_without_corners_border_bottom():
         [None, 64, 32, None],
         [16, 8, 4, 16]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
 
-def test_how_many_blocked_in_borders_without_corners_border_right():
+def test_count_blocked_in_borders_without_corners_border_right():
     board = Board([
         [None, None, None, 64],
         [None, None, 64, 8],
         [None, None, 32, 4],
         [None, None, None, 64]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
     board = Board([
         [None, None, None, 64],
@@ -168,17 +169,17 @@ def test_how_many_blocked_in_borders_without_corners_border_right():
         [None, None, 32, 8],
         [None, None, None, 64]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
 
-def test_how_many_blocked_in_borders_without_corners_border_left():
+def test_count_blocked_in_borders_without_corners_border_left():
     board = Board([
         [128, None, None, None],
         [2, 128, None, None],
         [32, 64, None, 4],
         [64, None, None, None]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
 
     board = Board([
         [128, None, None, None],
@@ -186,4 +187,30 @@ def test_how_many_blocked_in_borders_without_corners_border_left():
         [2, 64, None, 4],
         [64, None, None, None]
     ], num_of_fields_in_row=4)
-    board._get_num_of_blocked_fields_along_borders_without_corners() == 1
+    assert board._count_blocked_fields_along_borders_without_corners() == 1
+
+
+def test_count_bloced_inside():
+    board = Board([
+        [128, 512, 128, None],
+        [256, 2, 64, 8],
+        [16, 64, 4, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._count_blocked_fields_inside() == 2
+
+    board = Board([
+        [128, 512, 128, None],
+        [256, 4, 64, 8],
+        [16, 64, 2, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._count_blocked_fields_inside() == 2
+
+    board = Board([
+        [2, 64, 128, None],
+        [256, None, None, 8],
+        [16, None, None, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._count_blocked_fields_inside() == 0
