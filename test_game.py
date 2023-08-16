@@ -1,6 +1,8 @@
 import numpy as np
 from board import Board
 from game import Game
+import utilities
+import pytest
 
 # TEST MOVING RIGHT
 
@@ -583,3 +585,27 @@ def test_static_check_if_able_to_move():
                                                                num_of_fields_in_single_row=4)
     assert not if_sth_changed
     assert np.array_equal(changed_board.board_data, board.board_data)
+
+
+def test_direction_validation_no_error():
+    board = Board()
+    game = Game(board)
+
+    # no error
+    game._validate_function_with_direction("right")
+    game._validate_function_with_direction("left")
+    game._validate_function_with_direction("up")
+    game._validate_function_with_direction("down")
+
+
+def test_direction_validation_error():
+    board = Board()
+    game = Game(board)
+
+    # error
+    with pytest.raises(utilities.WrongUseOfFuncionError):
+        game._validate_function_with_direction("diagonal")
+    with pytest.raises(utilities.WrongUseOfFuncionError):
+        game._validate_function_with_direction("top")
+    with pytest.raises(utilities.WrongUseOfFuncionError):
+        game._validate_function_with_direction("bottom")

@@ -111,12 +111,10 @@ class Board():
         return field_center
 
     def evaluate(self) -> int:
-        return self._get_value_in_left_top_corner() * 5
+        _, if_in_left_top_corner = self._get_max_value()
+        corner_boost = 150 if if_in_left_top_corner else 0
 
-    def _get_value_in_left_top_corner(self):
-        if self.board_data[0][0] is None:
-            return -1
-        return self.board_data[0][0]
+        return self._get_num_of_empty_fields() * 20 + self._evaluate_spreading() * 5 + corner_boost
 
     def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
@@ -130,34 +128,129 @@ class Board():
     def _get_num_of_empty_fields(self) -> int:
         return len([field for row in self.board_data for field in row if not field])
 
+    def _increase_eval_if_sorted_reversedly(self, values: np.array, eval_value: int) -> int:
+        # used for 1 dimensional arrays
+        if not np.any(values == None):
+            if np.array_equal(values, np.sort(values)[::-1]):
+                eval_value += np.size(values)
+        return eval_value
+
     def _evaluate_spreading(self) -> int:
         evaluation_value = 0
 
-        def increase_eval_if_sorted_reversedly(values: np.array, eval_value: int) -> int:
-            # for 1 dimensional arrays
-            if not np.any(values == None):
-                if np.array_equal(values, np.sort(values)[::-1]):
-                    eval_value += np.size(values)
-            return eval_value
+        evaluation_value += self._evaluate_spreading_rows()
+        evaluation_value += self._evaluate_spreading_columns()
+        evaluation_value += self._evaluate_spreading_diagonal()
+
+        return evaluation_value
+
+    def _evaluate_spreading_rows(self):
+        evaluation_value = 0
 
         for i in range(self.num_of_fields_in_row):
             eval_booster = 1 if i != 0 else 5
             row = self.board_data[i, :]
             copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
-            evaluation_value = increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
-                                                                  evaluation_value)
+            evaluation_value = self._increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
+                                                                        evaluation_value)
             evaluation_value *= eval_booster
+
+        return evaluation_value
+
+    def _evaluate_spreading_columns(self):
+        evaluation_value = 0
 
         for j in range(self.num_of_fields_in_row):
             column = self.board_data[:, j]
             copied_column_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(column)
-            evaluation_value = increase_eval_if_sorted_reversedly(copied_column_without_nones_at_end,
-                                                                  evaluation_value)
+            evaluation_value = self._increase_eval_if_sorted_reversedly(copied_column_without_nones_at_end,
+                                                                        evaluation_value)
 
+        return evaluation_value
+
+    def _evaluate_spreading_diagonal(self):
+        evaluation_value = 0
+
+        # signle diagonal NW - SE
         diagonal_nw_se = np.diagonal(self.board_data)
         copied_diagonal_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(
             diagonal_nw_se)
-        evaluation_value = increase_eval_if_sorted_reversedly(copied_diagonal_without_nones_at_end,
-                                                              evaluation_value)
+        evaluation_value = self._increase_eval_if_sorted_reversedly(copied_diagonal_without_nones_at_end,
+                                                                    evaluation_value)
 
         return evaluation_value
+
+    def _get_num_of_blocked_fields_in_corners(self):
+        num_of_blocked_fields = 0
+        max_index = self.num_of_fields_in_row - 1
+
+        # check left top corner
+        if self.board_data[0][0] and self.board_data[0][1] and self.board_data[1][0]:
+            if 2 * self.board_data[0][0] <= self.board_data[0][1] and 2 * self.board_data[
+                    0][0] <= self.board_data[1][0]:
+                num_of_blocked_fields += 1
+
+        # check right top corner
+        if self.board_data[0][max_index] and self.board_data[0][max_index - 1] and self.board_data[1][max_index]:
+            if 2 * self.board_data[0][max_index] <= self.board_data[0][max_index - 1] and 2 * self.board_data[
+                    0][max_index] <= self.board_data[1][max_index]:
+                num_of_blocked_fields += 1
+
+        # check left down corner
+        if self.board_data[max_index][0] and self.board_data[max_index][1] and self.board_data[max_index - 1][0]:
+            if 2 * self.board_data[max_index][0] <= self.board_data[max_index - 1][
+                    0] and 2 * self.board_data[max_index][0] <= self.board_data[max_index][1]:
+                num_of_blocked_fields += 1
+
+        # check right down corner
+        if self.board_data[max_index][max_index] and self.board_data[max_index][max_index - 1] and self.board_data[
+                max_index - 1][max_index]:
+            if 2 * self.board_data[max_index][max_index] <= self.board_data[max_index][
+                    max_index - 1] and 2 * self.board_data[max_index][max_index] <= self.board_data[
+                        max_index - 1][max_index]:
+                num_of_blocked_fields += 1
+
+        return num_of_blocked_fields
+
+    def _get_num_of_blocked_fields_along_borders_without_corners(self):
+        num_of_blocked_fields = 0
+        max_index = self.num_of_fields_in_row - 1
+
+        for i in range(1, max_index):
+            # top border
+            if self.board_data[0][i] and self.board_data[0][i - 1] and self.board_data[0][
+                    i + 1] and self.board_data[1][i]:
+                if 2 * self.board_data[0][i] <= self.board_data[0][
+                    i - 1] and 2 * self.board_data[0][
+                        i] <= self.board_data[0][i + 1] and 2 * self.board_data[
+                            0][i] <= self.board_data[1][i]:
+                    num_of_blocked_fields += 1
+
+            # bottom border
+            if self.board_data[max_index][i] and self.board_data[max_index][i - 1] and self.board_data[
+                    max_index][i + 1] and self.board_data[max_index - 1][i]:
+                if 2 * self.board_data[max_index][i] <= self.board_data[
+                    max_index][i - 1] and 2 * self.board_data[
+                        max_index][i] <= self.board_data[max_index][
+                            i + 1] and 2 * self.board_data[max_index][
+                                i] <= self.board_data[max_index - 1][i]:
+                    num_of_blocked_fields += 1
+
+            # right border
+            if self.board_data[i][max_index] and self.board_data[i - 1][max_index] and self.board_data[
+                    i + 1][max_index] and self.board_data[i][max_index - 1]:
+                if 2 * self.board_data[i][max_index] <= self.board_data[i - 1][
+                        max_index] and 2 * self.board_data[i][max_index] <= self.board_data[
+                            i + 1][max_index] and 2 * self.board_data[i][
+                                max_index] <= self.board_data[i][max_index - 1]:
+                    num_of_blocked_fields += 1
+
+            # left border
+            if self.board_data[i][0] and self.board_data[i - 1][0] and self.board_data[
+                    i + 1][0] and self.board_data[i][1]:
+                if 2 * self.board_data[i][0] <= self.board_data[i - 1][0] and 2 * self.board_data[
+                        i][0] <= self.board_data[i + 1][0] and 2 * self.board_data[
+                            i][0] <= self.board_data[i][1]:
+                    num_of_blocked_fields += 1
+
+        return num_of_blocked_fields
