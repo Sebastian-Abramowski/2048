@@ -115,20 +115,35 @@ class Board():
         return field_center
 
     def evaluate(self) -> int:
-        _, if_in_left_top_corner = self._get_max_value()
+        _, if_best_in_left_top_corner = self._get_max_value()
+        _, if_second_largest_in_first_row = self._get_second_largest_value()
 
-        corner_boost = 150 if if_in_left_top_corner else 0
-        penalty_for_blocked_fields = self._count_blocked_fields() * 50
-        empty_fields_score = self._get_num_of_empty_fields() * 20
+        corner_boost = 250 if if_best_in_left_top_corner else 0
+
+        second_largest_value_penalty = 0 if if_second_largest_in_first_row else 25
+        penalty_for_blocked_fields = self._count_blocked_fields() * 65
+        penalty_for_blocked_top_left_corner = 170 if self._check_if_field_in_top_right_corner_is_blocked() else 0
+        penalties = second_largest_value_penalty + penalty_for_blocked_fields + penalty_for_blocked_top_left_corner
+
+        empty_fields_score = self._get_num_of_empty_fields() * 22
         spreading_score = self._evaluate_spreading() * 5
 
-        return empty_fields_score + spreading_score + corner_boost - penalty_for_blocked_fields
+        return empty_fields_score + spreading_score + corner_boost - penalties
 
     def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
         max_value = max(values)
         if_in_left_top_corner = self.board_data[0][0] == max_value
         return max(values), if_in_left_top_corner
+
+    def _get_second_largest_value(self) -> tuple[int, bool]:
+        values = self.board_data.flatten()
+        values = [num for num in values if num]
+        indexes_of_sorted = np.argsort(values)[-2:]
+        second_largest = values[indexes_of_sorted[0]]
+        if_in_first_row = second_largest in self.board_data[0]
+
+        return second_largest, if_in_first_row
 
     def _get_sum_of_values(self) -> int:
         return sum([num for row in self.board_data for num in row if num])
@@ -156,7 +171,7 @@ class Board():
         evaluation_value = 0
 
         for i in range(self.num_of_fields_in_row):
-            eval_booster = 1 if i != 0 else 5
+            eval_booster = 1 if i != 0 else 7
             row = self.board_data[i, :]
             copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
             evaluation_value = self._increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
@@ -289,3 +304,14 @@ class Board():
                     num_of_blocked_fields += 1
 
         return num_of_blocked_fields
+
+    def _check_if_field_in_top_right_corner_is_blocked(self) -> bool:
+        max_index = self.num_of_fields_in_row - 1
+
+        # check right top corner
+        if self.board_data[0][max_index] and self.board_data[0][max_index - 1] and \
+                self.board_data[1][max_index] and \
+                2 * self.board_data[0][max_index] <= self.board_data[0][max_index - 1] and \
+                2 * self.board_data[0][max_index] <= self.board_data[1][max_index]:
+            return True
+        return False

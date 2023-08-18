@@ -21,6 +21,36 @@ def test_get_max_number2():
     assert board._get_max_value() == (256, True)
 
 
+def test_get_second_largest_value():
+    board = Board([
+        [256, 4, 2, 1],
+        [16, 32, 64, 128],
+        [None, None, 2, 2],
+        [None, None, 2, 2]
+    ], num_of_fields_in_row=4)
+    assert board._get_second_largest_value() == (128, False)
+
+
+def test_get_second_largest_value2():
+    board = Board([
+        [256, 128, 2, 1],
+        [16, 32, 64, 128],
+        [None, None, 2, 2],
+        [None, None, 2, 2]
+    ], num_of_fields_in_row=4)
+    assert board._get_second_largest_value() == (128, True)
+
+
+def test_get_second_largest_value3():
+    board = Board([
+        [256, 64, 2, 128],
+        [16, 32, 64, 128],
+        [None, None, 2, 2],
+        [None, None, 2, 2]
+    ], num_of_fields_in_row=4)
+    assert board._get_second_largest_value() == (128, True)
+
+
 def test_get_sum_of_values():
     board = Board([
         [8, 4, 2, 1],

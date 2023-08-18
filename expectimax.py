@@ -13,7 +13,7 @@ def expectimax(board: Board, depth: int, max_player: bool) -> tuple[int, str]:
     if max_player:
         max_eval = float('-inf')
         best_direction = None
-        for direction in ["up", "down", "left", "right"]:
+        for direction in ["up", "left", "right", "down"]:
             if_sth_changed, new_board_after_movement = Game.check_if_able_to_move(board, direction)
             if if_sth_changed:
                 evaluation, _ = expectimax(new_board_after_movement, depth - 1, False)
