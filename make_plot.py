@@ -15,13 +15,15 @@ def configurate_plot(x_title: str, y_title: str, title: str) -> None:
     plt.grid(True)
 
 
-def show_plot() -> None:
-    plt.legend()
+def show_plot(without_legend=False) -> None:
+    if not without_legend:
+        plt.legend()
     plt.show()
 
 
-def save_plot(file_path: Union[Path, str]) -> None:
-    plt.legend()
+def save_plot(file_path: Union[Path, str], without_legend=False) -> None:
+    if not without_legend:
+        plt.legend()
     plt.savefig(file_path)
 
 
@@ -30,7 +32,7 @@ def clear_after_making_the_plot() -> None:
     plt.style.use("default")
 
 
-def make_plot(plot_data: dict[int, dict]) -> None:
+def make_plot_with_scores(plot_data: dict[int, dict]) -> None:
     """
     Example of plot_data:
     plot_data = {4: {"number_of_game": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -38,7 +40,6 @@ def make_plot(plot_data: dict[int, dict]) -> None:
                  5: {"number_of_game": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      "scores": [25, 234, 235, 4021, 20, 1245, 353, 3245, 9895, 10432]}}
     """
-
     configurate_plot("Nth game",
                      "Score",
                      "Scores got in N games with Expectimax algorithm with given depth")
@@ -47,28 +48,64 @@ def make_plot(plot_data: dict[int, dict]) -> None:
                                '#ffee65', '#ffb55a', '#bd7ebe',
                                '#b2e061', '#7eb0d5', '#fd7f6f'])
 
+    values_on_x_axis = None
     for depth, data_for_single_plot in plot_data.items():
+        if not values_on_x_axis:
+            values_on_x_axis = data_for_single_plot["number_of_game"]
         plt.plot(data_for_single_plot["number_of_game"],
                  data_for_single_plot["scores"],
                  label=f"depth: {depth}", color=stack_with_colors.pop())
+    plt.xticks(values_on_x_axis)
+    # update title with number of games
+    plt.title(f"Scores got in {len(values_on_x_axis)} games with Expectimax algorithm with given depth",
+              fontsize=12)
 
 
-def make_data_for_plot(depths: list, number_of_games: int) -> dict[int, dict]:
-    data_for_plot = dict()
+def make_plot_with_wins(plot_data: dict[int, int], number_of_games: int) -> None:
+    """
+    Example of plot_data
+    plot_data = {1: 0, 2: 23, 3: 34}
+
+    Depth: Number of wins with that depth
+    """
+    configurate_plot("Depth", "Number of wins",
+                     f"Number of wins after {number_of_games} games with given depth")
+    depths = [depth for depth, _ in plot_data.items()]
+    wins = [wins for _, wins in plot_data.items()]
+
+    plt_bar = plt.bar(depths, wins, color='#b2e061')
+    plt.xticks(ticks=depths)
+
+    bar_counter = 0
+    for rect in plt_bar:
+        height = rect.get_height()
+        plt.annotate(f"{height * number_of_games / 100}%", (rect.get_x() + rect.get_width() / 2, height + 0.05),
+                     ha="center", va="bottom", fontsize=12, label=f"Depth: {depths[bar_counter]}")
+        bar_counter += 1
+
+    plt.ylim(0, 1.1 * number_of_games)
+
+
+def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, dict], dict[int, int]]:
+    data_for_plot_with_scores = dict()
+    data_for_plot_with_wins = dict()
 
     for depth in depths:
         single_plot_data = dict()
         single_plot_data["number_of_game"] = range(1, number_of_games + 1)
 
         scores = []
+        wins = 0
         for _ in range(number_of_games):
             board = Board(game_start=True)
             game = Game(board)
-            print(game.score)
+            print("#")
 
             run = True
             while run:
                 if Game.check_if_blocked(game.board):
+                    if Game.check_for_win(game.board):
+                        wins += 1
                     scores.append(game.score)
                     run = False
                     continue
@@ -79,15 +116,23 @@ def make_data_for_plot(depths: list, number_of_games: int) -> dict[int, dict]:
                     game.board.add_new_random_field()
 
         single_plot_data["scores"] = scores
-        data_for_plot[depth] = single_plot_data
+        data_for_plot_with_scores[depth] = single_plot_data
 
-    return data_for_plot
+        data_for_plot_with_wins[depth] = wins
+
+    return data_for_plot_with_scores, data_for_plot_with_wins
 
 
 def main():
-    plot_data = make_data_for_plot([2, 3, 4, 5], 10)
-    make_plot(plot_data)
-    show_plot()
+    NUM_OF_GAMES = 2
+    plot_data_scores, plot_data_wins = make_data_for_plots([1, 2], NUM_OF_GAMES)
+
+    make_plot_with_scores(plot_data_scores)
+    save_plot("Plots/plot_scores.png")
+    clear_after_making_the_plot()
+
+    make_plot_with_wins(plot_data_wins, NUM_OF_GAMES)
+    save_plot("plots/plot_wins.png", without_legend=True)
     clear_after_making_the_plot()
 
 
