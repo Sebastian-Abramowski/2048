@@ -117,21 +117,24 @@ class Board():
 
     def evaluate(self) -> float:
         _, if_best_in_left_top_corner = self._get_max_value()
-        _, if_second_largest_in_first_row, if_second_largest_in_fist_column = self._get_second_largest_value()
+        _, if_second_largest_in_first_row, if_second_largest_in_first_column = self._get_second_largest_value()
 
         corner_boost = 350 if if_best_in_left_top_corner else 0
+        if_second_largest_in_first_row_or_column = if_second_largest_in_first_row or\
+            if_second_largest_in_first_column
+        second_largest_value_boost = 165 if if_second_largest_in_first_row_or_column and\
+            if_best_in_left_top_corner else 0
+        boost = corner_boost + second_largest_value_boost
 
-        second_largest_value_penalty = 0 if if_second_largest_in_first_row or\
-            if_second_largest_in_fist_column else 180
         penalty_for_blocked_fields = self._count_blocked_fields() * 75
         penalty_blocked_top_right_corner = 175 if self._check_if_field_in_top_right_corner_is_blocked() else 0
-        penalties = second_largest_value_penalty + penalty_for_blocked_fields + penalty_blocked_top_right_corner
+        penalties = penalty_for_blocked_fields + penalty_blocked_top_right_corner
 
-        empty_fields_score = self._get_num_of_empty_fields() * 60
-        spreading_score = self._evaluate_spreading() * 7
+        empty_fields_score = self._get_num_of_empty_fields() * 68
+        spreading_score = self._evaluate_spreading() * 9
         smoothness_score = self._evaluate_smoothness() * 4
 
-        return empty_fields_score + spreading_score + corner_boost - penalties - smoothness_score
+        return empty_fields_score + spreading_score + boost - penalties - smoothness_score
 
     def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
