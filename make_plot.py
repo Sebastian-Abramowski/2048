@@ -125,7 +125,7 @@ def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, d
 
 def main():
     NUM_OF_GAMES = 2
-    plot_data_scores, plot_data_wins = make_data_for_plots([1, 2], NUM_OF_GAMES)
+    plot_data_scores, plot_data_wins = make_data_for_plots([2, 3, 4], NUM_OF_GAMES)
 
     make_plot_with_scores(plot_data_scores)
     save_plot("Plots/plot_scores.png")

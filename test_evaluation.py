@@ -28,7 +28,7 @@ def test_get_second_largest_value():
         [None, None, 2, 2],
         [None, None, 2, 2]
     ], num_of_fields_in_row=4)
-    assert board._get_second_largest_value() == (128, False)
+    assert board._get_second_largest_value() == (128, False, False)
 
 
 def test_get_second_largest_value2():
@@ -38,7 +38,7 @@ def test_get_second_largest_value2():
         [None, None, 2, 2],
         [None, None, 2, 2]
     ], num_of_fields_in_row=4)
-    assert board._get_second_largest_value() == (128, True)
+    assert board._get_second_largest_value() == (128, True, False)
 
 
 def test_get_second_largest_value3():
@@ -46,9 +46,9 @@ def test_get_second_largest_value3():
         [256, 64, 2, 128],
         [16, 32, 64, 128],
         [None, None, 2, 2],
-        [None, None, 2, 2]
+        [128, None, 2, 2]
     ], num_of_fields_in_row=4)
-    assert board._get_second_largest_value() == (128, True)
+    assert board._get_second_largest_value() == (128, True, True)
 
 
 def test_get_sum_of_values():
@@ -244,3 +244,33 @@ def test_count_bloced_inside():
         [None, 16, 8, 2]
     ], num_of_fields_in_row=4)
     assert board._count_blocked_fields_inside() == 0
+
+
+def test_check_smoothness_in_rows():
+    board = Board([
+        [128, 512, 128, None],
+        [256, 2, 64, 8],
+        [16, 64, 4, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._evaluate_smoothness_in_rows() == 29
+
+
+def test_check_smoothness_in_columns():
+    board = Board([
+        [128, 512, 128, None],
+        [256, 2, 64, 8],
+        [16, 64, 4, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._evalute_smoothness_in_columns() == 28
+
+
+def test_check_smoothness():
+    board = Board([
+        [128, 512, 128, None],
+        [256, 2, 64, 8],
+        [16, 64, 4, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._evaluate_smoothness() >= 57

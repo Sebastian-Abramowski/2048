@@ -3,6 +3,7 @@ import constants
 import utilities
 import random
 import copy
+import math
 import numpy as np
 from typing import Union, Optional
 
@@ -114,21 +115,23 @@ class Board():
 
         return field_center
 
-    def evaluate(self) -> int:
+    def evaluate(self) -> float:
         _, if_best_in_left_top_corner = self._get_max_value()
-        _, if_second_largest_in_first_row = self._get_second_largest_value()
+        _, if_second_largest_in_first_row, if_second_largest_in_fist_column = self._get_second_largest_value()
 
-        corner_boost = 250 if if_best_in_left_top_corner else 0
+        corner_boost = 370 if if_best_in_left_top_corner else 0
 
-        second_largest_value_penalty = 0 if if_second_largest_in_first_row else 25
-        penalty_for_blocked_fields = self._count_blocked_fields() * 65
-        penalty_for_blocked_top_left_corner = 170 if self._check_if_field_in_top_right_corner_is_blocked() else 0
-        penalties = second_largest_value_penalty + penalty_for_blocked_fields + penalty_for_blocked_top_left_corner
+        second_largest_value_penalty = 0 if if_second_largest_in_first_row or\
+            if_second_largest_in_fist_column else 180
+        penalty_for_blocked_fields = self._count_blocked_fields() * 75
+        penalty_blocked_top_right_corner = 175 if self._check_if_field_in_top_right_corner_is_blocked() else 0
+        penalties = second_largest_value_penalty + penalty_for_blocked_fields + penalty_blocked_top_right_corner
 
-        empty_fields_score = self._get_num_of_empty_fields() * 22
-        spreading_score = self._evaluate_spreading() * 5
+        empty_fields_score = self._get_num_of_empty_fields() * 60
+        spreading_score = self._evaluate_spreading() * 7
+        smoothness_score = self._evaluate_smoothness() * 4
 
-        return empty_fields_score + spreading_score + corner_boost - penalties
+        return empty_fields_score + spreading_score + corner_boost - penalties - smoothness_score
 
     def _get_max_value(self) -> tuple[int, bool]:
         values = [num for row in self.board_data for num in row if num]
@@ -136,14 +139,15 @@ class Board():
         if_in_left_top_corner = self.board_data[0][0] == max_value
         return max(values), if_in_left_top_corner
 
-    def _get_second_largest_value(self) -> tuple[int, bool]:
+    def _get_second_largest_value(self) -> tuple[int, bool, bool]:
         values = self.board_data.flatten()
         values = [num for num in values if num]
         indexes_of_sorted = np.argsort(values)[-2:]
         second_largest = values[indexes_of_sorted[0]]
         if_in_first_row = second_largest in self.board_data[0]
+        if_in_first_column = second_largest in self.board_data[:, 0]
 
-        return second_largest, if_in_first_row
+        return second_largest, if_in_first_row, if_in_first_column
 
     def _get_sum_of_values(self) -> int:
         return sum([num for row in self.board_data for num in row if num])
@@ -158,12 +162,13 @@ class Board():
                 eval_value += np.size(values)
         return eval_value
 
-    def _evaluate_spreading(self) -> int:
+    def _evaluate_spreading(self) -> float:
         evaluation_value = 0
 
         evaluation_value += self._evaluate_spreading_rows()
         evaluation_value += self._evaluate_spreading_columns()
-        evaluation_value += self._evaluate_spreading_diagonal()
+        # reducing the value of diagonal evaluation
+        evaluation_value += self._evaluate_spreading_diagonal() / 2
 
         return evaluation_value
 
@@ -171,7 +176,7 @@ class Board():
         evaluation_value = 0
 
         for i in range(self.num_of_fields_in_row):
-            eval_booster = 1 if i != 0 else 7
+            eval_booster = 1 if i != 0 else 9
             row = self.board_data[i, :]
             copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
             evaluation_value = self._increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
@@ -315,3 +320,34 @@ class Board():
                 2 * self.board_data[0][max_index] <= self.board_data[1][max_index]:
             return True
         return False
+
+    def _evaluate_smoothness(self) -> int:
+        # The less, the better smoothness of the board
+        return 2 * self._evaluate_smoothness_in_rows() + self._evalute_smoothness_in_columns()
+
+    def _evaluate_smoothness_in_rows(self) -> int:
+        overall_difference = 0
+
+        for row in range(self.num_of_fields_in_row):
+            for column in range(self.num_of_fields_in_row - 1):
+                value = self.board_data[row][column]
+                value_on_right = self.board_data[row][column + 1]
+                if value and value_on_right:
+                    differnce = math.log(max(value, value_on_right) // min(value, value_on_right), 2)
+                    overall_difference += differnce
+
+        return overall_difference
+
+    def _evalute_smoothness_in_columns(self) -> int:
+        overall_difference = 0
+
+        for column in range(self.num_of_fields_in_row):
+            for row in range(self.num_of_fields_in_row - 1):
+                value = self.board_data[row][column]
+                value_below = self.board_data[row + 1][column]
+
+                if value and value_below:
+                    differnce = math.log(max(value, value_below) // min(value, value_below), 2)
+                    overall_difference += differnce
+
+        return overall_difference
