@@ -79,7 +79,8 @@ def make_plot_with_wins(plot_data: dict[int, int], number_of_games: int) -> None
     bar_counter = 0
     for rect in plt_bar:
         height = rect.get_height()
-        plt.annotate(f"{height * number_of_games / 100}%", (rect.get_x() + rect.get_width() / 2, height + 0.05),
+        plt.annotate(f"{round(height * 100 / number_of_games, 2)}%",
+                     (rect.get_x() + rect.get_width() / 2, height + 0.05),
                      ha="center", va="bottom", fontsize=12, label=f"Depth: {depths[bar_counter]}")
         bar_counter += 1
 
@@ -124,14 +125,14 @@ def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, d
 
 
 def main():
-    NUM_OF_GAMES = 2
-    plot_data_scores, plot_data_wins = make_data_for_plots([2, 3, 4], NUM_OF_GAMES)
+    num_of_games = 10
+    plot_data_scores, plot_data_wins = make_data_for_plots([2, 3, 4], num_of_games)
 
     make_plot_with_scores(plot_data_scores)
     save_plot("Plots/plot_scores.png")
     clear_after_making_the_plot()
 
-    make_plot_with_wins(plot_data_wins, NUM_OF_GAMES)
+    make_plot_with_wins(plot_data_wins, num_of_games)
     save_plot("plots/plot_wins.png", without_legend=True)
     clear_after_making_the_plot()
 

@@ -119,7 +119,7 @@ class Board():
         _, if_best_in_left_top_corner = self._get_max_value()
         _, if_second_largest_in_first_row, if_second_largest_in_fist_column = self._get_second_largest_value()
 
-        corner_boost = 370 if if_best_in_left_top_corner else 0
+        corner_boost = 350 if if_best_in_left_top_corner else 0
 
         second_largest_value_penalty = 0 if if_second_largest_in_first_row or\
             if_second_largest_in_fist_column else 180
@@ -172,7 +172,7 @@ class Board():
 
         return evaluation_value
 
-    def _evaluate_spreading_rows(self):
+    def _evaluate_spreading_rows(self) -> int:
         evaluation_value = 0
 
         for i in range(self.num_of_fields_in_row):
@@ -185,7 +185,7 @@ class Board():
 
         return evaluation_value
 
-    def _evaluate_spreading_columns(self):
+    def _evaluate_spreading_columns(self) -> int:
         evaluation_value = 0
 
         for j in range(self.num_of_fields_in_row):
@@ -196,7 +196,7 @@ class Board():
 
         return evaluation_value
 
-    def _evaluate_spreading_diagonal(self):
+    def _evaluate_spreading_diagonal(self) -> int:
         evaluation_value = 0
 
         # signle diagonal NW - SE
@@ -208,7 +208,7 @@ class Board():
 
         return evaluation_value
 
-    def _count_blocked_fields(self):
+    def _count_blocked_fields(self) -> int:
         blocked_fields = 0
 
         blocked_fields += self._count_blocked_fields_along_borders_without_corners()
@@ -217,7 +217,7 @@ class Board():
 
         return blocked_fields
 
-    def _count_blocked_fields_in_corners(self):
+    def _count_blocked_fields_in_corners(self) -> int:
         num_of_blocked_fields = 0
         max_index = self.num_of_fields_in_row - 1
 
@@ -250,7 +250,7 @@ class Board():
 
         return num_of_blocked_fields
 
-    def _count_blocked_fields_along_borders_without_corners(self):
+    def _count_blocked_fields_along_borders_without_corners(self) -> int:
         num_of_blocked_fields = 0
         max_index = self.num_of_fields_in_row - 1
 
@@ -288,7 +288,7 @@ class Board():
 
         return num_of_blocked_fields
 
-    def _count_blocked_fields_inside(self):
+    def _count_blocked_fields_inside(self) -> int:
         num_of_blocked_fields = 0
         max_index = self.num_of_fields_in_row - 1
 
