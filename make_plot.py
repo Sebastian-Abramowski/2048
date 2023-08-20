@@ -5,6 +5,7 @@ from collections import deque
 from board import Board
 from game import Game
 from expectimax import expectimax
+from tqdm import tqdm
 
 
 def configurate_plot(x_title: str, y_title: str, title: str) -> None:
@@ -91,16 +92,17 @@ def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, d
     data_for_plot_with_scores = dict()
     data_for_plot_with_wins = dict()
 
-    for depth in depths:
+    for depth in tqdm(depths, desc="Checked depth counter", unit="depths",
+                      colour="#84cc16"):
         single_plot_data = dict()
         single_plot_data["number_of_game"] = range(1, number_of_games + 1)
 
         scores = []
         wins = 0
-        for _ in range(number_of_games):
+        for _ in tqdm(range(number_of_games), desc=f"Games with depth {depth} counter",
+                      unit="games", colour="#ecfccb"):
             board = Board(game_start=True)
             game = Game(board)
-            print("#")
 
             run = True
             while run:
@@ -125,8 +127,8 @@ def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, d
 
 
 def main():
-    num_of_games = 10
-    plot_data_scores, plot_data_wins = make_data_for_plots([2, 3, 4], num_of_games)
+    num_of_games = 30
+    plot_data_scores, plot_data_wins = make_data_for_plots([3, 4], num_of_games)
 
     make_plot_with_scores(plot_data_scores)
     save_plot("Plots/plot_scores.png")

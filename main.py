@@ -84,7 +84,7 @@ while run:
 
     # AI move
     if game.if_ai_play and not game.if_moving_is_blocked and not game.if_blocked:
-        _, best_direction = expectimax(game.board, 4, True)
+        _, best_direction = expectimax(game.board, 3, True)
         if best_direction:
             game.move(best_direction, if_save_last_move=False)
             game.board.add_new_random_field()
