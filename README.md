@@ -41,7 +41,7 @@ The main difference between Minimax and Expectimax is that in Expectimax, in min
 
 ---
 
-# Following measurments
+# Following measurments - 10 games
 
 Following measurments of depth 3 and 4 after 10 games, since they were quite confusing in plots above (it could be due to randomness of the game).
 
