@@ -53,6 +53,7 @@ Following measurments of depth 3 and 4 after 10 games, since they were quite con
 
 # Bot playing with depth 3
 
+<img src="Assets/playing.gif" alt="Playing gif of bot with depth of 3" width="50%">
 ![gif-bot-playing](Assets/playing.gif)
 
 ### Starting the game
