@@ -29,11 +29,11 @@ class Game():
         self._validate_function_with_direction(direction)
 
         if direction in ["right", "left"]:
-            return self._move_horiziontally(direction, curr_score_rect_center=curr_score_rect_center,
-                                            if_save_last_move=if_save_last_move)
+            return self._move_horiziontally(direction, curr_score_rect_center,
+                                            if_save_last_move)
         elif direction in ["up", "down"]:
-            return self._move_vertically(direction, curr_score_rect_center=curr_score_rect_center,
-                                         if_save_last_move=if_save_last_move)
+            return self._move_vertically(direction, curr_score_rect_center,
+                                         if_save_last_move)
 
     def _move_horiziontally(self, direction: str, curr_score_rect_center: Optional[tuple[int, int]] = None,
                             if_save_last_move: bool = True) -> bool:
@@ -55,7 +55,7 @@ class Game():
     def _merge_fields_in_row(self, row_index: int, direction: str,
                              curr_score_rect_center: tuple[int, int]) -> None:
         skip_counter = 0
-        col_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
+        col_range, merge_cond, next_index, not_out_of_range = self._get_logic_for_merging(direction)
 
         for column_index in col_range:
             if skip_counter > 0:
@@ -73,6 +73,9 @@ class Game():
 
     def _skip_none_values_in_row(self, merge_cond: Callable[[int], bool], next_index: Callable[[int], int],
                                  skip_counter: int, row_index: int, temp_col_index: int) -> tuple[int, int]:
+        """
+        Increases temp_col_index until it spots not None value and keeps track of how many None values it skipped
+        """
         while merge_cond(temp_col_index) and self.board.board_data[
                 row_index][temp_col_index] is None:
             temp_col_index = next_index(temp_col_index)
@@ -131,7 +134,7 @@ class Game():
     def _merge_fields_in_column(self, column_index: int, direction: str,
                                 curr_score_rect_center: tuple[int, int]) -> None:
         skip_counter = 0
-        row_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
+        row_range, merge_cond, next_index, not_out_of_range = self._get_logic_for_merging(direction)
 
         for row_index in row_range:
             if skip_counter > 0:
@@ -165,6 +168,9 @@ class Game():
 
     def _skip_none_values_in_column(self, merge_cond: Callable[[int], bool], next_index: Callable[[int], int],
                                     skip_counter: int, temp_row_index: int, column_index: int) -> tuple[int, int]:
+        """
+        Increases temp_row_index until it spots not None value and keeps track of how many None values it skipped
+        """
         while merge_cond(temp_row_index) and self.board.board_data[
                 temp_row_index][column_index] is None:
             temp_row_index = next_index(temp_row_index)
@@ -194,7 +200,7 @@ class Game():
             for row_index in range(self.num_of_fields_in_row):
                 self.board.board_data[row_index][column_index] = new_column[row_index]
 
-    def _get_direction_logic(self, direction: str) -> tuple[
+    def _get_logic_for_merging(self, direction: str) -> tuple[
             int, Callable[[int], bool], Callable[[int], int], Callable[[int], bool]]:
         if direction == "left" or direction == "up":
             row_or_col_range = range(self.num_of_fields_in_row)
