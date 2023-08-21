@@ -28,7 +28,7 @@ def save_plot(file_path: Union[Path, str]) -> None:
     plt.savefig(file_path)
 
 
-def clear_after_making_the_plot() -> None:
+def clear_after_making_plot() -> None:
     plt.cla()
     plt.style.use("default")
 
@@ -40,6 +40,9 @@ def make_plot_with_scores(plot_data: dict[int, dict]) -> None:
                      "scores": [10, 192, 194, 3000, 234, 1243, 4352, 2345, 2345, 10923]},
                  5: {"number_of_game": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      "scores": [25, 234, 235, 4021, 20, 1245, 353, 3245, 9895, 10432]}}
+
+    Keys are depths
+    Dictionaries should have the same number of games
     """
     configurate_plot("Nth game",
                      "Score",
@@ -133,11 +136,11 @@ def main():
     make_plot_with_scores(plot_data_scores)
     show_legend()
     save_plot("Plots/plot_scores.png")
-    clear_after_making_the_plot()
+    clear_after_making_plot()
 
     make_plot_with_wins(plot_data_wins, num_of_games)
     save_plot("plots/plot_wins.png")
-    clear_after_making_the_plot()
+    clear_after_making_plot()
 
 
 if __name__ == "__main__":
