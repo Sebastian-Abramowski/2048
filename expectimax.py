@@ -6,6 +6,15 @@ from game import Game
 sys.setrecursionlimit(5000)
 
 
+def get_average_evaluation_value(total_eval: float, empty_fields: list) -> float:
+    if len(empty_fields) != 0:
+        average_evaluation_value = total_eval / len(empty_fields)
+    else:
+        average_evaluation_value = 0
+
+    return average_evaluation_value
+
+
 def expectimax(board: Board, depth: int, max_player: bool) -> tuple[int, str]:
     if depth == 0 or Game.check_if_blocked(board):
         return board.evaluate(), None
@@ -37,9 +46,6 @@ def expectimax(board: Board, depth: int, max_player: bool) -> tuple[int, str]:
 
             total_eval += 0.9 * eval_2 + 0.1 * eval_4
 
-        if len(empty_fields) != 0:
-            average_evaluation_value = total_eval / len(empty_fields)
-        else:
-            average_evaluation_value = 0
+        average_evaluation_value = get_average_evaluation_value(total_eval, empty_fields)
 
         return average_evaluation_value, None

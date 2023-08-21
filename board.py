@@ -10,7 +10,7 @@ from typing import Union, Optional
 
 class Board():
     def __init__(self, board_data: Optional[list[list[Union[int, None]]]] = None, game_start: bool = False,
-                 num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW):
+                 num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW_AND_COL):
         self.num_of_fields_in_row = num_of_fields_in_row
         board_data = self._get_empty_list() if not board_data else board_data
         self.board_data = np.array(board_data, dtype=object)
@@ -181,7 +181,7 @@ class Board():
         for i in range(self.num_of_fields_in_row):
             eval_booster = 1 if i != 0 else 9
             row = self.board_data[i, :]
-            copied_row_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(row)
+            copied_row_without_nones_at_end = utilities.get_copy_of_numpy_list_without_none_values_at_the_end(row)
             evaluation_value = self._increase_eval_if_sorted_reversedly(copied_row_without_nones_at_end,
                                                                         evaluation_value)
             evaluation_value *= eval_booster
@@ -193,7 +193,8 @@ class Board():
 
         for j in range(self.num_of_fields_in_row):
             column = self.board_data[:, j]
-            copied_column_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(column)
+            copied_column_without_nones_at_end = utilities.get_copy_of_numpy_list_without_none_values_at_the_end(
+                column)
             evaluation_value = self._increase_eval_if_sorted_reversedly(copied_column_without_nones_at_end,
                                                                         evaluation_value)
 
@@ -204,7 +205,7 @@ class Board():
 
         # signle diagonal NW - SE
         diagonal_nw_se = np.diagonal(self.board_data)
-        copied_diagonal_without_nones_at_end = utilities.remove_none_values_from_the_end_of_numpy_list(
+        copied_diagonal_without_nones_at_end = utilities.get_copy_of_numpy_list_without_none_values_at_the_end(
             diagonal_nw_se)
         evaluation_value = self._increase_eval_if_sorted_reversedly(copied_diagonal_without_nones_at_end,
                                                                     evaluation_value)

@@ -16,15 +16,15 @@ def configurate_plot(x_title: str, y_title: str, title: str) -> None:
     plt.grid(True)
 
 
-def show_plot(without_legend=False) -> None:
-    if not without_legend:
-        plt.legend()
+def show_legend() -> None:
+    plt.legend()
+
+
+def show_plot() -> None:
     plt.show()
 
 
-def save_plot(file_path: Union[Path, str], without_legend=False) -> None:
-    if not without_legend:
-        plt.legend()
+def save_plot(file_path: Union[Path, str]) -> None:
     plt.savefig(file_path)
 
 
@@ -115,7 +115,7 @@ def make_data_for_plots(depths: list, number_of_games: int) -> tuple[dict[int, d
 
                 _, best_direction = expectimax(game.board, depth, True)
                 if best_direction:
-                    game.move(best_direction, if_save_last_move=False)
+                    game.move_and_check_if_moved(best_direction, if_save_last_move=False)
                     game.board.add_new_random_field()
 
         single_plot_data["scores"] = scores
@@ -131,11 +131,12 @@ def main():
     plot_data_scores, plot_data_wins = make_data_for_plots([3, 4], num_of_games)
 
     make_plot_with_scores(plot_data_scores)
+    show_legend()
     save_plot("Plots/plot_scores.png")
     clear_after_making_the_plot()
 
     make_plot_with_wins(plot_data_wins, num_of_games)
-    save_plot("plots/plot_wins.png", without_legend=True)
+    save_plot("plots/plot_wins.png")
     clear_after_making_the_plot()
 
 

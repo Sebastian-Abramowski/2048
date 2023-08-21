@@ -37,34 +37,47 @@ def read_best_score_from_file(file_path: Union[Path, str]) -> int:
         return max(scores)
 
 
-def read_best_player_or_ai_score_from_file(file_path: Union[Path, str], player_or_ai: str) -> int:
+def read_best_player_score_from_file(file_path: Union[Path, str]) -> int:
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
         data = list(csvreader)
-        if player_or_ai == "player":
-            return int(data[0][1])
-        elif player_or_ai == "ai":
-            return int(data[1][1])
+        return int(data[0][1])
 
 
-def update_best_score_in_file(file_path: Union[Path, str], new_best_score: int, if_ai: bool) -> None:
+def read_best_ai_score_from_file(file_path: Union[Path, str]) -> int:
+    with open(file_path, 'r') as file_handle:
+        csvreader = csv.reader(file_handle)
+        data = list(csvreader)
+        return int(data[1][1])
+
+
+def update_best_player_score_in_file(file_path: Union[Path, str], new_best_score: int) -> None:
     existing_data = []
     with open(file_path, 'r') as file_handle:
         csvreader = csv.reader(file_handle)
         existing_data = list(csvreader)
 
-    if if_ai:
-        existing_data[1][1] = new_best_score
-    else:
-        existing_data[0][1] = new_best_score
+    existing_data[0][1] = new_best_score
 
     with open(file_path, 'w', newline='\n') as file_handle:
         csvwriter = csv.writer(file_handle)
         csvwriter.writerows(existing_data)
 
 
-def remove_none_values_from_the_end_of_numpy_list(values: np.array) -> np.array:
-    # it returns copied array, not original
+def update_best_ai_score_in_file(file_path: Union[Path, str], new_best_score: int) -> None:
+    existing_data = []
+    with open(file_path, 'r') as file_handle:
+        csvreader = csv.reader(file_handle)
+        existing_data = list(csvreader)
+
+    existing_data[1][1] = new_best_score
+
+    with open(file_path, 'w', newline='\n') as file_handle:
+        csvwriter = csv.writer(file_handle)
+        csvwriter.writerows(existing_data)
+
+
+def get_copy_of_numpy_list_without_none_values_at_the_end(values: np.array) -> np.array:
     while np.size(values) > 0 and values[-1] is None:
         values = np.delete(values, -1)
     return values

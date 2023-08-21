@@ -14,7 +14,7 @@ def test_move_right_without_none_between():
                    [2, 2, 2, 2]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -30,7 +30,7 @@ def test_move_right_with_none_between():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -46,7 +46,7 @@ def test_just_move_right():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -66,7 +66,7 @@ def test_move_right_blocked():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert not game.move("right")
+    assert not game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, starting_board)
 
 
@@ -77,7 +77,7 @@ def test_move_right_partially_blocked():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -93,7 +93,7 @@ def test_move_right_double_merging():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -114,7 +114,7 @@ def test_move_right_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None, None, None, None, None, 4],
         [None, None, None, 4, 8, 4],
@@ -132,7 +132,7 @@ def test_move_right_order():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("right")
+    assert game.move_and_check_if_moved("right")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -151,7 +151,7 @@ def test_move_left_without_none_between():
                    [2, 2, 2, 2]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [4, None, None, None],
@@ -167,7 +167,7 @@ def test_move_left_with_none_between():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -183,7 +183,7 @@ def test_just_move_left():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -203,7 +203,7 @@ def test_move_left_blocked():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert not game.move("left")
+    assert not game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, starting_board)
 
 
@@ -214,7 +214,7 @@ def test_move_left_partially_blocked():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -230,7 +230,7 @@ def test_move_left_double_merging():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -251,7 +251,7 @@ def test_move_left_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [4, None, None, None, None, None],
         [4, 8, 4, None, None, None],
@@ -269,7 +269,7 @@ def test_move_left_order():
                    [None] * 4], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("left")
+    assert game.move_and_check_if_moved("left")
     assert np.array_equal(board.board_data, [
         [None] * 4,
         [None] * 4,
@@ -288,7 +288,7 @@ def test_move_up_without_none_between():
                    [None, 2, None, None]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [None, 4, None, None],
         [None, 4, None, None],
@@ -304,7 +304,7 @@ def test_move_up_with_none_between():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [4, None, None, 8],
         [None, None, None, None],
@@ -320,7 +320,7 @@ def test_just_move_up():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [4, None, None, 16],
         [2, None, None, 4],
@@ -340,7 +340,7 @@ def test_move_up_blocked():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert not game.move("up")
+    assert not game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, starting_board)
 
 
@@ -351,7 +351,7 @@ def test_move_up_partially_blocked():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [2, None, None, 16],
         [8, None, None, 2],
@@ -367,7 +367,7 @@ def test_move_up_double_merging():
                    [4, None, None, 2]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [4, None, None, 4],
         [8, None, None, 4],
@@ -387,7 +387,7 @@ def test_move_up_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [4, 4, 64, 2, 4, 2],
         [None, 8, 2, 4, 16, 16],
@@ -405,7 +405,7 @@ def test_move_up_order():
                    [None, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("up")
+    assert game.move_and_check_if_moved("up")
     assert np.array_equal(board.board_data, [
         [4, None, None, 8],
         [2, None, None, 4],
@@ -424,7 +424,7 @@ def test_move_down_without_none_between():
                    [None, 2, None, None]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [None, None, None, None],
@@ -440,7 +440,7 @@ def test_move_down_with_none_between():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [None, None, None, None],
@@ -456,7 +456,7 @@ def test_just_move_down():
                    [None, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [None, None, None, None],
@@ -476,7 +476,7 @@ def test_move_down_blocked():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert not game.move("down")
+    assert not game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, starting_board)
 
 
@@ -487,7 +487,7 @@ def test_move_down_partially_blocked():
                    [2, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [2, None, None, 16],
@@ -503,7 +503,7 @@ def test_move_down_double_merging():
                    [4, None, None, 2]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [None, None, None, None],
@@ -523,7 +523,7 @@ def test_move_down_ultimate_test():
     )
     game = Game(board, num_of_fields_in_row=6)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, 64, None, None, None],
         [None, None, 2, 2, None, None],
@@ -541,7 +541,7 @@ def test_move_down_order():
                    [None, None, None, 4]], num_of_fields_in_row=4)
     game = Game(board, num_of_fields_in_row=4)
 
-    assert game.move("down")
+    assert game.move_and_check_if_moved("down")
     assert np.array_equal(board.board_data, [
         [None, None, None, None],
         [None, None, None, None],

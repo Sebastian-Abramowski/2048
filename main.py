@@ -51,13 +51,13 @@ while run:
 
     game.board.draw(screen, 6 * constants.PADDING)
 
-    if restart_button.draw(screen) and not if_restart_game:
+    if restart_button.draw_and_check_if_clicked(screen) and not if_restart_game:
         game.restart_game(constants.SCORES_FILE_PATH)
 
         if_restart_game = True
 
     if_there_was_no_win_or_blockade = not game.if_blocked and not game.if_moving_is_blocked
-    if undo_button.draw(screen) and not game.if_undo_move and if_there_was_no_win_or_blockade:
+    if undo_button.draw_and_check_if_clicked(screen) and not game.if_undo_move and if_there_was_no_win_or_blockade:
         game.undo_last_move()
 
     if not game.if_started:
@@ -78,15 +78,18 @@ while run:
                                            constants.BLACK)
         game.if_blocked = True
 
-    if best_score < game.score:
-        utilities.update_best_score_in_file(constants.SCORES_FILE_PATH, game.score, game.if_ai_play)
+    if game.score > best_score:
+        if game.if_ai_play:
+            utilities.update_best_ai_score_in_file(constants.SCORES_FILE_PATH, game.score)
+        else:
+            utilities.update_best_player_score_in_file(constants.SCORES_FILE_PATH, game.score)
         best_score = game.score
 
     # AI move
     if game.if_ai_play and not game.if_moving_is_blocked and not game.if_blocked:
         _, best_direction = expectimax(game.board, 3, True)
         if best_direction:
-            game.move(best_direction, if_save_last_move=False)
+            game.move_and_check_if_moved(best_direction, if_save_last_move=False)
             game.board.add_new_random_field()
 
     for event in pygame.event.get():
@@ -98,22 +101,22 @@ while run:
         if event.type == pygame.KEYDOWN:
             if not game.if_moving_is_blocked and not game.if_ai_play:
                 if event.key in [pygame.K_a, pygame.K_LEFT]:
-                    if game.move("left", score_rect_center):
+                    if game.move_and_check_if_moved("left", score_rect_center):
                         game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    if game.move("right", score_rect_center):
+                    if game.move_and_check_if_moved("right", score_rect_center):
                         game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_w, pygame.K_UP]:
-                    if game.move("up", score_rect_center):
+                    if game.move_and_check_if_moved("up", score_rect_center):
                         game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()
                 if event.key in [pygame.K_s, pygame.K_DOWN]:
-                    if game.move("down", score_rect_center):
+                    if game.move_and_check_if_moved("down", score_rect_center):
                         game.if_started = True
                         game.board.add_new_random_field()
                         merge_sound.play()

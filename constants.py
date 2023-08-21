@@ -44,8 +44,7 @@ MEDIUM_FONT = font.Font("Assets/Roboto-Black.ttf", 50)
 
 PADDING = 50
 BOARD_PADDING = 15
-# columns have the same number of fields
-NUM_OF_FIELDS_IN_ROW = 4
+NUM_OF_FIELDS_IN_ROW_AND_COL = 4
 
 RESTART_BUTTON_SCALE = 1 / 8
 UNDO_BUTTON_SCALE = 1

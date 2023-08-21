@@ -7,7 +7,7 @@ class Button():
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-    def draw(self, surface: pygame.Surface) -> bool:
+    def draw_and_check_if_clicked(self, surface: pygame.Surface) -> bool:
         action = False
         mouse_pos = pygame.mouse.get_pos()
 

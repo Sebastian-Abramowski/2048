@@ -10,7 +10,7 @@ from typing import Callable, Optional, Union
 
 
 class Game():
-    def __init__(self, board: Board, num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW):
+    def __init__(self, board: Board, num_of_fields_in_row: int = constants.NUM_OF_FIELDS_IN_ROW_AND_COL):
         self.board = board
         self.score = 0
         self.if_undo_move = False
@@ -24,26 +24,26 @@ class Game():
         self._last_board_data = None
         self._last_score = None
 
-    def move(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
-             if_save_last_move: bool = True) -> bool:
+    def move_and_check_if_moved(self, direction: str, curr_score_rect_center: Optional[tuple[int, int]] = None,
+                                if_save_last_move: bool = True) -> bool:
         self._validate_function_with_direction(direction)
 
         if direction in ["right", "left"]:
-            return self.move_horiziontally(direction, score_rect_center=score_rect_center,
-                                           if_save_last_move=if_save_last_move)
+            return self._move_horiziontally(direction, curr_score_rect_center=curr_score_rect_center,
+                                            if_save_last_move=if_save_last_move)
         elif direction in ["up", "down"]:
-            return self.move_vertically(direction, score_rect_center=score_rect_center,
-                                        if_save_last_move=if_save_last_move)
+            return self._move_vertically(direction, curr_score_rect_center=curr_score_rect_center,
+                                         if_save_last_move=if_save_last_move)
 
-    def move_horiziontally(self, direction: str, score_rect_center: Optional[tuple[int, int]] = None,
-                           if_save_last_move: bool = True) -> bool:
+    def _move_horiziontally(self, direction: str, curr_score_rect_center: Optional[tuple[int, int]] = None,
+                            if_save_last_move: bool = True) -> bool:
         if if_save_last_move:
             last_board_data = copy.deepcopy(self.board.board_data)
             last_score = self.score
         board_data_before_changing = copy.deepcopy(self.board.board_data)
 
         for row_index in range(self.num_of_fields_in_row):
-            self._merge_fields_in_row(row_index, direction, score_rect_center)
+            self._merge_fields_in_row(row_index, direction, curr_score_rect_center)
         # move fields to the right/left if it's possible
         self._move_everything_horizontally(direction)
 
@@ -53,7 +53,7 @@ class Game():
         return is_board_changed
 
     def _merge_fields_in_row(self, row_index: int, direction: str,
-                             score_rect_center: tuple[int, int]) -> None:
+                             curr_score_rect_center: tuple[int, int]) -> None:
         skip_counter = 0
         col_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
 
@@ -69,7 +69,7 @@ class Game():
                 skip_counter, temp_col_index = self._skip_none_values_in_row(merge_cond, next_index, skip_counter,
                                                                              row_index, temp_col_index)
                 skip_counter = self._merge_two_fields_in_row(not_out_of_range, skip_counter, num, row_index,
-                                                             column_index, temp_col_index, score_rect_center)
+                                                             column_index, temp_col_index, curr_score_rect_center)
 
     def _skip_none_values_in_row(self, merge_cond: Callable[[int], bool], next_index: Callable[[int], int],
                                  skip_counter: int, row_index: int, temp_col_index: int) -> tuple[int, int]:
@@ -81,14 +81,14 @@ class Game():
 
     def _merge_two_fields_in_row(self, not_out_of_range: Callable[[int], bool], skip_counter: int,
                                  num: int, row_index: int, column_index: int, temp_col_index: int,
-                                 score_rect_center: int) -> int:
+                                 curr_score_rect_center: int) -> int:
         if not_out_of_range(temp_col_index):
             if self.board.board_data[row_index][temp_col_index] == num:
                 self.board.board_data[row_index][column_index] = None
                 self.board.board_data[row_index][temp_col_index] = 2 * num
                 self.score += 2 * num
 
-                self._add_damage_to_score_text_group(num, score_rect_center)
+                self._add_damage_to_score_text_group(num, curr_score_rect_center)
 
                 skip_counter += 1
         return skip_counter
@@ -110,8 +110,8 @@ class Game():
         elif direction == "left":
             self.board.board_data[row_index] = fields_values + none_values
 
-    def move_vertically(self, direction: str, score_rect_center: tuple[int, int] = None,
-                        if_save_last_move: bool = True) -> bool:
+    def _move_vertically(self, direction: str, curr_score_rect_center: tuple[int, int] = None,
+                         if_save_last_move: bool = True) -> bool:
         last_board_data, last_score = None, None
         if if_save_last_move:
             last_board_data = copy.deepcopy(self.board.board_data)
@@ -119,7 +119,7 @@ class Game():
         board_data_before_changing = copy.deepcopy(self.board.board_data)
 
         for column_index in range(self.num_of_fields_in_row):
-            self._merge_fields_in_column(column_index, direction, score_rect_center)
+            self._merge_fields_in_column(column_index, direction, curr_score_rect_center)
         # move fields up/down if it's possible
         self._move_everything_vertically(direction)
 
@@ -129,7 +129,7 @@ class Game():
         return is_board_changed
 
     def _merge_fields_in_column(self, column_index: int, direction: str,
-                                score_rect_center: tuple[int, int]) -> None:
+                                curr_score_rect_center: tuple[int, int]) -> None:
         skip_counter = 0
         row_range, merge_cond, next_index, not_out_of_range = self._get_direction_logic(direction)
 
@@ -147,18 +147,18 @@ class Game():
                                                                                 column_index)
                 skip_counter = self._merge_two_fields_in_column(not_out_of_range, skip_counter, num,
                                                                 row_index, column_index, temp_row_index,
-                                                                score_rect_center)
+                                                                curr_score_rect_center)
 
     def _merge_two_fields_in_column(self, not_out_of_range: Callable[[int], bool], skip_counter: int, num: int,
                                     row_index: int, column_index: int, temp_row_index: int,
-                                    score_rect_center: tuple[int, int]) -> int:
+                                    curr_score_rect_center: tuple[int, int]) -> int:
         if not_out_of_range(temp_row_index):
             if self.board.board_data[temp_row_index][column_index] == num:
                 self.board.board_data[row_index][column_index] = None
                 self.board.board_data[temp_row_index][column_index] = 2 * num
                 self.score += 2 * num
 
-                self._add_damage_to_score_text_group(num, score_rect_center)
+                self._add_damage_to_score_text_group(num, curr_score_rect_center)
 
                 skip_counter += 1
         return skip_counter
@@ -216,14 +216,19 @@ class Game():
             self.score = self._last_score
 
     def update_score_in_file(self, file_path: Union[Path, str]) -> None:
-        player_or_ai = "ai" if self.if_ai_play else "player"
+        if self.if_ai_play:
+            current_score = utilities.read_best_ai_score_from_file(file_path)
+        else:
+            current_score = utilities.read_best_player_score_from_file(file_path)
 
-        if self.score > utilities.read_best_player_or_ai_score_from_file(file_path, player_or_ai):
-            utilities.update_best_score_in_file(
-                file_path, self.score, self.if_ai_play)
+        if self.score > current_score:
+            if self.if_ai_play:
+                utilities.update_best_ai_score_in_file(file_path, self.score)
+            else:
+                utilities.update_best_player_score_in_file(file_path, self.score)
 
-    def _add_to_score_text_group(self, damage: str, score_rect_center: tuple[int, int]) -> None:
-        score_text = ScoreText(*score_rect_center, damage, constants.GREY, constants.NORMAL_FONT)
+    def _add_to_score_text_group(self, text: str, curr_score_rect_center: tuple[int, int]) -> None:
+        score_text = ScoreText(*curr_score_rect_center, text, constants.GREY, constants.NORMAL_FONT)
         if self.score_text_group:
             last_sprite_creation_time = self.score_text_group.sprites()[-1].creation_time
             if score_text.creation_time - last_sprite_creation_time > score_text.cooldown:
@@ -237,10 +242,10 @@ class Game():
         self.if_undo_move = False
 
     def _add_damage_to_score_text_group(self, num: int,
-                                        score_rect_center: tuple[int, int]) -> None:
-        if score_rect_center:
+                                        curr_score_rect_center: tuple[int, int]) -> None:
+        if curr_score_rect_center:
             damage = '+' + str(2 * num)
-            self._add_to_score_text_group(damage, score_rect_center)
+            self._add_to_score_text_group(damage, curr_score_rect_center)
 
     def restart_game(self, file_path_to_best_scores: Union[Path, str]) -> None:
         self.update_score_in_file(file_path_to_best_scores)
@@ -263,6 +268,9 @@ class Game():
         return if_board_changed
 
     def _validate_function_with_direction(self, direction: str):
+        """
+        Raises WrongUseOfFunctionError, if passed direction is unknown
+        """
         if direction not in ["left", "right", "up", "down"]:
             error_message = (f"The direction can be either left, right, up or down. "
                              f"You passed {direction}")
@@ -274,22 +282,23 @@ class Game():
 
     @staticmethod
     def check_if_blocked(board: Board,
-                         num_of_fields_in_single_row=constants.NUM_OF_FIELDS_IN_ROW) -> bool:
+                         num_of_fields_in_single_row=constants.NUM_OF_FIELDS_IN_ROW_AND_COL) -> bool:
         new_board = copy.deepcopy(board)
         new_game = Game(new_board, num_of_fields_in_row=num_of_fields_in_single_row)
 
         for direction in ["up", "down", "right", "left"]:
-            if new_game.move(direction, if_save_last_move=False):
+            if new_game.move_and_check_if_moved(direction, if_save_last_move=False):
                 return False
         return True
 
     @staticmethod
     def check_if_able_to_move(board: Board, direction: str,
-                              num_of_fields_in_single_row=constants.NUM_OF_FIELDS_IN_ROW) -> tuple[bool, Board]:
+                              num_of_fields_in_single_row=constants.NUM_OF_FIELDS_IN_ROW_AND_COL) -> tuple[
+                                  bool, Board]:
         new_board = copy.deepcopy(board)
         new_game = Game(new_board, num_of_fields_in_row=num_of_fields_in_single_row)
 
-        if_sth_on_board_changed = new_game.move(direction, if_save_last_move=False)
+        if_sth_on_board_changed = new_game.move_and_check_if_moved(direction, if_save_last_move=False)
         board_after_movement = new_game.board
 
         return if_sth_on_board_changed, board_after_movement
