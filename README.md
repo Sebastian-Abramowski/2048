@@ -51,6 +51,10 @@ Following measurments of depth 3 and 4 after 10 games, since they were quite con
 
 ![2048-game-ui](Assets/2048_ui.png)
 
+# Bot playing with depth 3
+
+![gif-bot-playing](Assets/playing.gif)
+
 ### Starting the game
 
 ```bash
