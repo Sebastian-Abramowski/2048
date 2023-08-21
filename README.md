@@ -36,8 +36,8 @@ The main difference between Minimax and Expectimax is that in Expectimax, in min
 
 # Measurments - 15 games
 
-![scores](Plots/plot_scores.png)
-![wins](Plots/plot_wins.png)
+<img src="Plots/plot_scores.png" alt="Plot with scores" width="50%">
+<img src="Plots/plot_wins.png" alt="Plot with wins" width="50%">
 
 # Following measurments
 
