@@ -36,24 +36,24 @@ The main difference between Minimax and Expectimax is that in Expectimax, in min
 
 # Measurments - 15 games
 
-![scores](Plots/plot_scores.png)
-![wins](Plots/plot_wins.png)
+<img src="Plots/plot_scores.png" alt="Plots with scores" width="75%">
+<img src="Plots/plot_wins.png" alt="Plots with wins" width="75%">
 
 # Following measurments
 
 Following measurments of depth 3 and 4 after 10 games, since they were quite confusing in plots above (it could be due to randomness of the game).
 
-![scores-depth-3-vs-4](Plots/plot_scores_depth_3vs4.png)
-![wins-depth-3-vs-4](Plots/plot_wins_depth_3vs4.png)
+<img src="Plots/plot_scores_depth_3vs4.png" alt="Plot with scores depth 3 vs 4" width="75%">
+<img src="Plots/plot_wins_depth_3vs4.png" alt="Plot with wins depth 3 vs 4" width="75%">
 ...
 
 # How it looks
 
-<img src="Assets/2048_ui.png" alt="2048-game-ui" width="60%">
+<img src="Assets/2048_ui.png" alt="2048-game-ui" width="75%">
 
 # Bot playing with depth 3
 
-<img src="Assets/playing.gif" alt="Playing with depth 3 gif" widht="60%">
+![gif-bot-playing](Assets/playing.gif)
 
 ### Starting the game
 
