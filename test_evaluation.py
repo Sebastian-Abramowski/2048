@@ -274,3 +274,13 @@ def test_check_smoothness():
         [None, 16, 8, 2]
     ], num_of_fields_in_row=4)
     assert board._evaluate_smoothness() >= 57
+
+
+def test_check_if_field_in_top_right_corner_is_blocked():
+    board = Board([
+        [128, 512, 128, 4],
+        [256, 2, 64, 8],
+        [16, 64, 4, 8],
+        [None, 16, 8, 2]
+    ], num_of_fields_in_row=4)
+    assert board._check_if_field_in_top_right_corner_is_blocked()
